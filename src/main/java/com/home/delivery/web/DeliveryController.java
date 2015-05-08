@@ -1,12 +1,15 @@
 package com.home.delivery.web;
 
 import com.home.delivery.app.DeliveriesService;
+import com.home.delivery.app.Delivery;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.inject.Inject;
+import java.util.Set;
 
 /**
  * Created by evgeny on 08.05.15.
@@ -31,4 +34,12 @@ public class DeliveryController {
     public void getDelivery(@PathVariable(value = "deliveryId") String deliveryId) {
         deliveriesService.getDelivery(deliveryId);
     }
+
+
+    @ModelAttribute("allDeliveries")
+    public Set<Delivery> allDeliveries() {
+        return deliveriesService.getAllDeliveries();
+    }
+
+
 }

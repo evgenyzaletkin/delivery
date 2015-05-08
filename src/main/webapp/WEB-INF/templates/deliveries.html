@@ -1,0 +1,44 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <meta charset="UTF-8"/>
+    <title th:text="#{deliveries.title}">Deliveries</title>
+</head>
+<body>
+    <table th:unless="${#lists.isEmpty(allDeliveries)}">
+        <thead>
+            <tr>
+                <th th:text="#{deliveries.number}">Order Number</th>
+                <th th:text="#{deliveries.client}">Client Name</th>
+                <th th:text="#{deliveries.date}">Date</th>
+                <th th:text="#{deliveries.shift}">Shift</th>
+                <th th:text="#{deliveries.city}">City</th>
+                <th th:text="#{deliveries.address}">Address</th>
+                <th th:text="#{deliveries.volume}">Volume</th>
+                <th th:text="#{deliveries.quantity}">Quantity</th>
+                <th th:text="#{deliveries.total}">Total</th>
+                <th th:text="#{deliveries.phone}">Phone Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="d : ${allDeliveries}">
+                <td th:text="${d.orderNumber}">123</td>
+                <td th:text="${d.clientName}">Ivan</td>
+                <td th:text="${d.deliveryDate}">01-01-2015</td>
+                <td th:text="${d.deliveryShift}">M</td>
+                <td th:text="${d.destinationCity}">New York</td>
+                <td th:text="${d.destinationAdress}">1080 Bearses way</td>
+                <td th:text="${d.volumeNumber}">60,8</td>
+                <td th:text="${d.quantity}">3</td>
+                <td th:text="${d.quantity * d.volumeNumber}">181,6</td>
+                <td th:text="${d.phoneNumber}">777-7-777</td>
+            </tr>
+        </tbody>
+
+    </table>
+    <div th:if="${#lists.isEmpty(allDeliveries)}">
+        <p th:text="#{deliveries.empty}">No deliveries</p>
+    </div>
+</body>
+</html>
