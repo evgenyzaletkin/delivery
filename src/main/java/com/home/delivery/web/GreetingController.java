@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class GreetingController {
 
     @RequestMapping(method = RequestMethod.GET)
-    public void sayHello() {
-        throw new RuntimeException();
+    public String sayHello() {
+        return "greeting";
     }
 }

@@ -4,25 +4,31 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-       <context:component-scan base-package="com.home.delivery.web"/>
+    <context:component-scan base-package="com.home.delivery.web"/>
 
-       <bean id="templateResolver"
-             class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
-              <property name="prefix" value="/WEB-INF/templates/" />
-              <property name="suffix" value=".html" />
-              <property name="templateMode" value="HTML5" />
-       </bean>
-
-       <bean id="templateEngine"
-             class="org.thymeleaf.spring4.SpringTemplateEngine">
-              <property name="templateResolver" ref="templateResolver" />
-       </bean>
-
-    <bean class="org.thymeleaf.spring4.view.ThymeleafViewResolver">
-        <property name="templateEngine" ref="templateEngine" />
-        <property name="order" value="1" />
-        <property name="viewNames" value="*.html,*.xhtml" />
+    <bean id="templateResolver"
+          class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+        <property name="prefix" value="/WEB-INF/templates/"/>
+        <property name="suffix" value=".html"/>
+        <property name="templateMode" value="HTML5"/>
     </bean>
 
-       <import resource="application-context.xml"/>
+    <bean id="templateEngine"
+          class="org.thymeleaf.spring4.SpringTemplateEngine">
+        <property name="templateResolver" ref="templateResolver"/>
+    </bean>
+
+    <bean class="org.thymeleaf.spring4.view.ThymeleafViewResolver">
+        <property name="templateEngine" ref="templateEngine"/>
+        <!--<property name="order" value="1"/>-->
+        <!--<property name="viewNames" value="*.html,*.xhtml"/>-->
+    </bean>
+
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="Messages" />
+    </bean>
+
+
+
+    <import resource="application-context.xml"/>
 </beans>

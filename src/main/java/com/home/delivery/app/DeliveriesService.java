@@ -1,11 +1,10 @@
 package com.home.delivery.app;
 
-import com.home.delivery.app.io.CSVFileReader;
-
-import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.Collections;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Created by evgeny on 08.05.15.
@@ -13,23 +12,26 @@ import java.util.List;
 @Named("deliveriesService")
 public class DeliveriesService {
 
-    private final CSVFileReader csvFileReader;
+    volatile Set<Delivery> deliveries = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
-    @Inject
-    public DeliveriesService(CSVFileReader csvFileReader) {
-        this.csvFileReader = csvFileReader;
+    public Set<Delivery> getAllDeliveries() {
+        return deliveries;
     }
 
-    public List<Delivery> getAllDeliveries() {
-        return Collections.emptyList();
+    public Optional<Delivery> getDelivery(String deliveryId) {
+        return deliveries.stream().filter(d -> d.getOrderNumber().equals(deliveryId)).findAny();
     }
 
-    public Delivery getDelivery(String deliveryId) {
-        return null;
+    public void addDeliveries(Collection<Delivery> deliveries) {
+        this.deliveries.addAll(deliveries);
     }
 
-    public void loadDeliveries(Object o) {
+    public void removeDelivery(Delivery delivery) {
+        this.deliveries.remove(delivery);
+    }
 
+    public List<Delivery> getDeliveriesByDate(LocalDate date) {
+        return deliveries.stream().filter(d -> date.isEqual(d.getDeliveryDate())).collect(Collectors.toList());
     }
 
 }

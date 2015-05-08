@@ -5,7 +5,7 @@ import java.time.LocalDate;
 /**
  * Created by evgeny on 05.05.15.
  */
-public class Delivery {
+public final class Delivery {
     private final LocalDate deliveryDate;
     private final DeliveryShift deliveryShift;
 //    private final String originName;
@@ -135,4 +135,20 @@ public class Delivery {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Delivery delivery = (Delivery) o;
+
+        if (!orderNumber.equals(delivery.orderNumber)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return orderNumber.hashCode();
+    }
 }
