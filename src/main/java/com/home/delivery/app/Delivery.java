@@ -6,24 +6,27 @@ import java.time.LocalDate;
  * Created by evgeny on 05.05.15.
  */
 public final class Delivery {
-    private final LocalDate deliveryDate;
-    private final DeliveryShift deliveryShift;
+    private LocalDate deliveryDate;
+    private DeliveryShift deliveryShift;
 //    private final String originName;
 //    private final String originAdress;
 //    private final String originCity;
 //    private final String originState;
 //    private final Integer originZip;
 //    private final String originCountry;
-    private final String clientName;
-    private final String destinationAdress;
-    private final String destinationCity;
-    private final String destinationState;
-    private final Integer destinationZip;
+    private String clientName;
+    private String destinationAdress;
+    private String destinationCity;
+    private String destinationState;
+    private Integer destinationZip;
 //    private final String destinationCountry;
-    private final String phoneNumber;
-    private final String orderNumber;
-    private final Float volumeNumber;
-    private final Integer quantity;
+    private String phoneNumber;
+    private String orderNumber;
+    private Float volumeNumber;
+    private Integer quantity;
+
+    public Delivery() {
+    }
 
     public Delivery(LocalDate deliveryDate, DeliveryShift deliveryShift, String clientName, String destinationAdress,
                     String destinationCity, String destinationState, Integer destinationZip, String phoneNumber,
@@ -83,6 +86,50 @@ public final class Delivery {
 
     public Integer getQuantity() {
         return quantity;
+    }
+
+    public void setDeliveryDate(LocalDate deliveryDate) {
+        this.deliveryDate = deliveryDate;
+    }
+
+    public void setDeliveryShift(DeliveryShift deliveryShift) {
+        this.deliveryShift = deliveryShift;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
+
+    public void setDestinationAdress(String destinationAdress) {
+        this.destinationAdress = destinationAdress;
+    }
+
+    public void setDestinationCity(String destinationCity) {
+        this.destinationCity = destinationCity;
+    }
+
+    public void setDestinationState(String destinationState) {
+        this.destinationState = destinationState;
+    }
+
+    public void setDestinationZip(Integer destinationZip) {
+        this.destinationZip = destinationZip;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public void setVolumeNumber(Float volumeNumber) {
+        this.volumeNumber = volumeNumber;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
     //    private final static int FIELDS_COUNT = 10;

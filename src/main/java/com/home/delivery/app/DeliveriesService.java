@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 /**
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 @Named("deliveriesService")
 public class DeliveriesService {
 
-    volatile Set<Delivery> deliveries = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private final ConcurrentMap<String, Delivery> deliveries = new ConcurrentHashMap<>();
     private final CSVFileReader csvFileReader;
 
     @Inject
@@ -26,24 +27,24 @@ public class DeliveriesService {
         this.csvFileReader = csvFileReader;
     }
 
-    public Set<Delivery> getAllDeliveries() {
-        return deliveries;
+    public Collection<Delivery> getAllDeliveries() {
+        return deliveries.values();
     }
 
     public Optional<Delivery> getDelivery(String deliveryId) {
-        return deliveries.stream().filter(d -> d.getOrderNumber().equals(deliveryId)).findAny();
+        return Optional.ofNullable(deliveries.get(deliveryId));
     }
 
     public void addDeliveries(Collection<Delivery> deliveries) {
-        this.deliveries.addAll(deliveries);
+        deliveries.forEach(d -> this.deliveries.put(d.getOrderNumber(), d));
     }
 
     public void removeDelivery(Delivery delivery) {
-        this.deliveries.remove(delivery);
+        this.deliveries.remove(delivery.getOrderNumber());
     }
 
     public List<Delivery> getDeliveriesByDate(LocalDate date) {
-        return deliveries.stream().filter(d -> date.isEqual(d.getDeliveryDate())).collect(Collectors.toList());
+        return deliveries.values().stream().filter(d -> date.isEqual(d.getDeliveryDate())).collect(Collectors.toList());
     }
 
     //ToDo WA, should be removed when uploading is available
