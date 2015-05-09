@@ -1,12 +1,15 @@
 package com.home.delivery.app;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 /**
  * Created by evgeny on 05.05.15.
  */
 public final class Delivery {
-    private LocalDate deliveryDate;
+    @NotNull private LocalDate deliveryDate;
     private DeliveryShift deliveryShift;
 //    private final String originName;
 //    private final String originAdress;
@@ -14,16 +17,16 @@ public final class Delivery {
 //    private final String originState;
 //    private final Integer originZip;
 //    private final String originCountry;
-    private String clientName;
-    private String destinationAdress;
-    private String destinationCity;
-    private String destinationState;
+    @Pattern(regexp = "^(?=\\s*\\S).*$") private String clientName;
+    @Pattern(regexp = "^(?=\\s*\\S).*$") private String destinationAdress;
+    @Pattern(regexp = "^(?=\\s*\\S).*$") private String destinationCity;
+    @Pattern(regexp = "^(?=\\s*\\S).*$") private String destinationState;
     private Integer destinationZip;
 //    private final String destinationCountry;
     private String phoneNumber;
-    private String orderNumber;
-    private Float volumeNumber;
-    private Integer quantity;
+    @Pattern(regexp = "^(?=\\s*\\S).*$") private String orderNumber;
+    @Min(0) private Float volumeNumber;
+    @Min(1) private Integer quantity;
 
     public Delivery() {
     }

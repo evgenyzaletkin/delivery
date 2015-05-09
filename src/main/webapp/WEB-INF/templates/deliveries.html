@@ -4,44 +4,46 @@
 <head lang="en">
     <meta charset="UTF-8"/>
     <title th:text="#{deliveries.title}">Deliveries</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/resources/css/bootstrap.min.css}"/>
 </head>
 <body>
-    <table th:unless="${#lists.isEmpty(deliveries)}">
-        <thead>
-            <tr>
-                <th th:text="#{deliveries.number}">Order Number</th>
-                <th th:text="#{deliveries.client}">Client Name</th>
-                <th th:text="#{deliveries.date}">Date</th>
-                <th th:text="#{deliveries.shift}">Shift</th>
-                <th th:text="#{deliveries.city}">City</th>
-                <th th:text="#{deliveries.address}">Address</th>
-                <th th:text="#{deliveries.volume}">Volume</th>
-                <th th:text="#{deliveries.quantity}">Quantity</th>
-                <th th:text="#{deliveries.total}">Total</th>
-                <th th:text="#{deliveries.phone}">Phone Number</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="d : ${deliveries}">
-                <td><a href="/deliveries"
-                       th:href="@{'/deliveries/' + ${d.orderNumber}}"
-                        th:text="${d.orderNumber}">Some Text</a>
-                </td>
-                <td th:text="${d.clientName}">Ivan</td>
-                <td th:text="${d.deliveryDate}">01-01-2015</td>
-                <td th:text="${d.deliveryShift == null} ? '' : #{${'shift.' + d.deliveryShift}}">M</td>
-                <td th:text="${d.destinationCity}">New York</td>
-                <td th:text="${d.destinationAdress}">1080 Bearses way</td>
-                <td th:text="${d.volumeNumber}">60,8</td>
-                <td th:text="${d.quantity}">3</td>
-                <td th:text="${d.quantity * d.volumeNumber}">181,6</td>
-                <td th:text="${d.phoneNumber}">777-7-777</td>
-            </tr>
-        </tbody>
 
-    </table>
-    <div th:if="${#lists.isEmpty(deliveries)}">
-        <p th:text="#{deliveries.empty}">No deliveries</p>
-    </div>
+<table th:unless="${#lists.isEmpty(deliveries)}">
+    <thead>
+    <tr>
+        <th th:text="#{deliveries.number}">Order Number</th>
+        <th th:text="#{deliveries.client}">Client Name</th>
+        <th th:text="#{deliveries.date}">Date</th>
+        <th th:text="#{deliveries.shift}">Shift</th>
+        <th th:text="#{deliveries.city}">City</th>
+        <th th:text="#{deliveries.address}">Address</th>
+        <th th:text="#{deliveries.volume}">Volume</th>
+        <th th:text="#{deliveries.quantity}">Quantity</th>
+        <th th:text="#{deliveries.total}">Total</th>
+        <th th:text="#{deliveries.phone}">Phone Number</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="d : ${deliveries}">
+        <td><a href="/deliveries"
+               th:href="@{'/deliveries/' + ${d.orderNumber}}"
+               th:text="${d.orderNumber}">Some Text</a>
+        </td>
+        <td th:text="${d.clientName}">Ivan</td>
+        <td th:text="${d.deliveryDate}">01-01-2015</td>
+        <td th:text="${d.deliveryShift == null} ? '' : #{${'shift.' + d.deliveryShift}}">M</td>
+        <td th:text="${d.destinationCity}">New York</td>
+        <td th:text="${d.destinationAdress}">1080 Bearses way</td>
+        <td th:text="${d.volumeNumber}">60,8</td>
+        <td th:text="${d.quantity}">3</td>
+        <td th:text="${d.quantity * d.volumeNumber}">182,4</td>
+        <td th:text="${d.phoneNumber}">777-7-777</td>
+    </tr>
+    </tbody>
+
+</table>
+<div th:if="${#lists.isEmpty(deliveries)}">
+    <p th:text="#{deliveries.empty}">No deliveries</p>
+</div>
 </body>
 </html>

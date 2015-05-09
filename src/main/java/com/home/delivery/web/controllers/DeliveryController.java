@@ -2,6 +2,7 @@ package com.home.delivery.web.controllers;
 
 import com.home.delivery.app.DeliveriesService;
 import com.home.delivery.app.Delivery;
+import com.home.delivery.app.DeliveryShift;
 import com.home.delivery.web.ResourceNotFoundException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Optional;
 
 /**
@@ -27,6 +30,7 @@ public class DeliveryController {
     private static final Log log = LogFactory.getLog(DeliveryController.class);
     private static final String DELIVERIES_ATTRIBUTE = "deliveries";
     private static final String DELIVERY_ATTRIUBTE = "delivery";
+    private static final String ALL_SHIFTS_ATTRIBUTE = "allShifts";
 
     @Inject
     public DeliveryController(DeliveriesService deliveriesService) {
@@ -44,17 +48,17 @@ public class DeliveryController {
         log.debug("Getting delivery" + deliveryId);
         Optional<Delivery> delivery = deliveriesService.getDelivery(deliveryId);
         return delivery.map(d -> {
+            model.addAttribute(ALL_SHIFTS_ATTRIBUTE, EnumSet.allOf(DeliveryShift.class));
             model.addAttribute(DELIVERY_ATTRIUBTE, d);
             return "delivery";
         }).orElseThrow(ResourceNotFoundException::new);
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String updateDelivery(Delivery delivery, BindingResult bindingResult, Model model) {
+    public String updateDelivery(@Valid Delivery delivery, BindingResult bindingResult) {
         if (bindingResult.hasErrors())
-            throw new RuntimeException(bindingResult.toString());
+            return "delivery";
         deliveriesService.addDeliveries(Collections.singletonList(delivery));
-        model.addAttribute(DELIVERIES_ATTRIBUTE, deliveriesService.getAllDeliveries());
-        return "deliveries";
+        return "redirect:deliveries";
     }
 }
