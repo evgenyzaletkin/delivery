@@ -2,13 +2,12 @@ package com.home.delivery.app;
 
 import com.home.delivery.app.io.CSVFileReader;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -48,12 +47,12 @@ public class DeliveriesService {
     }
 
     //ToDo WA, should be removed when uploading is available
-    @PostConstruct
-    private void loadAllDeliveries() {
-        InputStream is = DeliveriesService.class.getClassLoader().getResourceAsStream("schedule.csv");
-        InputStreamReader isr = new InputStreamReader(is);
-        List<Delivery> deliveries = csvFileReader.readDeliveries(isr);
-        addDeliveries(deliveries);
-    }
+//    @PostConstruct
+//    private void loadAllDeliveries() {
+//        InputStream is = DeliveriesService.class.getClassLoader().getResourceAsStream("schedule.csv");
+//        InputStreamReader isr = new InputStreamReader(is);
+//        List<Delivery> deliveries = csvFileReader.readDeliveries(isr);
+//        addDeliveries(deliveries);
+//    }
 
 }

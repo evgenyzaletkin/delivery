@@ -1,8 +1,9 @@
 package com.home.delivery.app;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 /**
@@ -17,14 +18,14 @@ public final class Delivery {
 //    private final String originState;
 //    private final Integer originZip;
 //    private final String originCountry;
-    @Pattern(regexp = "^(?=\\s*\\S).*$") private String clientName;
-    @Pattern(regexp = "^(?=\\s*\\S).*$") private String destinationAdress;
-    @Pattern(regexp = "^(?=\\s*\\S).*$") private String destinationCity;
-    @Pattern(regexp = "^(?=\\s*\\S).*$") private String destinationState;
+    @NotEmpty private String clientName;
+    private String destinationAdress;
+    private String destinationCity;
+    private String destinationState;
     private Integer destinationZip;
 //    private final String destinationCountry;
     private String phoneNumber;
-    @Pattern(regexp = "^(?=\\s*\\S).*$") private String orderNumber;
+    @NotEmpty private String orderNumber;
     @Min(0) private Float volumeNumber;
     @Min(1) private Integer quantity;
 

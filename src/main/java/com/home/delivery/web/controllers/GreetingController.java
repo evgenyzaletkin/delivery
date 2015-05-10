@@ -15,4 +15,9 @@ public class GreetingController {
     public String sayHello() {
         return "greeting";
     }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/dispatcher")
+    public String dispatcherMenu() {
+        return "dispatcher";
+    }
 }

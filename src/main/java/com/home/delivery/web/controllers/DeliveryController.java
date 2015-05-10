@@ -9,15 +9,15 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by evgeny on 08.05.15.
@@ -39,7 +39,15 @@ public class DeliveryController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getAllDeliveries(Model model) {
-        model.addAttribute(DELIVERIES_ATTRIBUTE, deliveriesService.getAllDeliveries());
+        List<Delivery> sortedByDate = deliveriesService.getAllDeliveries().
+                stream().
+                sorted((d1, d2) -> {
+                    if (d1.getDeliveryDate() == null) return 1;
+                    if (d2.getDeliveryDate() == null) return -1;
+                    return d1.getDeliveryDate().compareTo(d2.getDeliveryDate());
+                }).
+                collect(Collectors.toList());
+        model.addAttribute(DELIVERIES_ATTRIBUTE, sortedByDate);
         return "deliveries";
     }
 
@@ -48,7 +56,7 @@ public class DeliveryController {
         log.debug("Getting delivery" + deliveryId);
         Optional<Delivery> delivery = deliveriesService.getDelivery(deliveryId);
         return delivery.map(d -> {
-            model.addAttribute(ALL_SHIFTS_ATTRIBUTE, EnumSet.allOf(DeliveryShift.class));
+//            model.addAttribute(ALL_SHIFTS_ATTRIBUTE, EnumSet.allOf(DeliveryShift.class));
             model.addAttribute(DELIVERY_ATTRIUBTE, d);
             return "delivery";
         }).orElseThrow(ResourceNotFoundException::new);
@@ -60,5 +68,10 @@ public class DeliveryController {
             return "delivery";
         deliveriesService.addDeliveries(Collections.singletonList(delivery));
         return "redirect:deliveries";
+    }
+
+    @ModelAttribute(ALL_SHIFTS_ATTRIBUTE)
+    public Set<DeliveryShift> allShifts() {
+        return EnumSet.allOf(DeliveryShift.class);
     }
 }
