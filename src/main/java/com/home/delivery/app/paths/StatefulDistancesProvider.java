@@ -12,7 +12,7 @@ import java.util.Map;
 public class StatefulDistancesProvider implements DistancesProvider{
 
     private final GoogleMapsService mapsService;
-    private Map<String, Integer> distances;
+    private Map<RouteElement, Integer> distances;
 
     @Inject
     public StatefulDistancesProvider(GoogleMapsService mapsService) {
@@ -25,6 +25,6 @@ public class StatefulDistancesProvider implements DistancesProvider{
 
     @Override
     public Integer getDistance(String from, String to){
-        return distances.get(from + "_" + to);
+        return distances.get(new RouteElement(from, to));
     }
 }

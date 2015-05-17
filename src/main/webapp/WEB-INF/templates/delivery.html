@@ -44,20 +44,20 @@
 
     <div>
         <label th:text="#{deliveries.address}">Address</label>
-        <input type="text" th:field="*{destinationAdress}" th:value="*{destinationAdress}" value="1080 Bearses way"/>
-        <p th:if="${#fields.hasErrors('destinationAdress')}" th:errors="*{destinationAdress}">Incorrect address</p>
+        <input type="text" th:field="*{street}" th:value="*{street}" value="1080 Bearses way"/>
+        <p th:if="${#fields.hasErrors('street')}" th:errors="*{street}">Incorrect address</p>
     </div>
 
     <div>
         <label th:text="#{deliveries.city}">City</label>
-        <input type="text" th:field="*{destinationCity}" th:value="*{destinationCity}" value="NY"/>
-        <p th:if="${#fields.hasErrors('destinationCity')}" th:errors="*{destinationCity}">Incorrect City</p>
+        <input type="text" th:field="*{city}" th:value="*{city}" value="NY"/>
+        <p th:if="${#fields.hasErrors('city')}" th:errors="*{city}">Incorrect City</p>
     </div>
 
     <div>
         <label th:text="#{deliveries.state}">State</label>
-        <input type="text" th:field="*{destinationState}" th:value="*{destinationState}" value="NY"/>
-        <p th:if="${#fields.hasErrors('destinationState')}" th:errors="*{destinationState}">Incorrect State</p>
+        <input type="text" th:field="*{state}" th:value="*{state}" value="NY"/>
+        <p th:if="${#fields.hasErrors('state')}" th:errors="*{state}">Incorrect State</p>
     </div>
 
     <div>

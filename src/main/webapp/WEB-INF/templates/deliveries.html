@@ -37,8 +37,8 @@
                 <td th:text="${d.clientName}">Ivan</td>
                 <td th:text="${d.deliveryDate}">01-01-2015</td>
                 <td th:text="${d.deliveryShift == null} ? '' : #{${'shift.' + d.deliveryShift}}">M</td>
-                <td th:text="${d.destinationCity}">New York</td>
-                <td th:text="${d.destinationAdress}">1080 Bearses way</td>
+                <td th:text="${d.city}">New York</td>
+                <td th:text="${d.street}">1080 Bearses way</td>
                 <td th:text="${d.volumeNumber}">60,8</td>
                 <td th:text="${d.quantity}">3</td>
                 <td th:text="${d.quantity * d.volumeNumber}">182,4</td>

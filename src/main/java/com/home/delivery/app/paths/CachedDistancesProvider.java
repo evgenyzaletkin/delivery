@@ -11,7 +11,7 @@ public class CachedDistancesProvider implements DistancesProvider{
 
     private final GoogleMapsService mapsService;
 
-    private final ConcurrentMap<String, Integer> cachedDistances = new ConcurrentHashMap<>();
+    private final ConcurrentMap<RouteElement, Integer> cachedDistances = new ConcurrentHashMap<>();
 
     @Inject
     public CachedDistancesProvider(GoogleMapsService mapsService) {
@@ -20,7 +20,7 @@ public class CachedDistancesProvider implements DistancesProvider{
 
     @Override
     public Integer getDistance(String from, String to) {
-        return cachedDistances.computeIfAbsent(from + "_" + to,
+        return cachedDistances.computeIfAbsent(new RouteElement(from, to),
                 key -> mapsService.getDistances(Collections.singletonList(from), Collections.singletonList(to)).get(key));
     }
 }

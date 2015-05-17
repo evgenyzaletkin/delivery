@@ -19,10 +19,10 @@ public final class Delivery {
 //    private final Integer originZip;
 //    private final String originCountry;
     @NotEmpty private String clientName;
-    private String destinationAdress;
-    private String destinationCity;
-    private String destinationState;
-    private Integer destinationZip;
+    private String street;
+    private String city;
+    private String state;
+    private Integer zip;
 //    private final String destinationCountry;
     private String phoneNumber;
     @NotEmpty private String orderNumber;
@@ -32,16 +32,16 @@ public final class Delivery {
     public Delivery() {
     }
 
-    public Delivery(LocalDate deliveryDate, DeliveryShift deliveryShift, String clientName, String destinationAdress,
-                    String destinationCity, String destinationState, Integer destinationZip, String phoneNumber,
+    public Delivery(LocalDate deliveryDate, DeliveryShift deliveryShift, String clientName, String street,
+                    String city, String state, Integer destinationZip, String phoneNumber,
                     String orderNumber, Float volumeNumber, Integer quantity) {
         this.deliveryDate = deliveryDate;
         this.deliveryShift = deliveryShift;
         this.clientName = clientName;
-        this.destinationAdress = destinationAdress;
-        this.destinationCity = destinationCity;
-        this.destinationState = destinationState;
-        this.destinationZip = destinationZip;
+        this.street = street;
+        this.city = city;
+        this.state = state;
+        this.zip = destinationZip;
         this.phoneNumber = phoneNumber;
         this.orderNumber = orderNumber;
         this.volumeNumber = volumeNumber;
@@ -60,20 +60,20 @@ public final class Delivery {
         return clientName;
     }
 
-    public String getDestinationAdress() {
-        return destinationAdress;
+    public String getStreet() {
+        return street;
     }
 
-    public String getDestinationCity() {
-        return destinationCity;
+    public String getCity() {
+        return city;
     }
 
-    public String getDestinationState() {
-        return destinationState;
+    public String getState() {
+        return state;
     }
 
-    public Integer getDestinationZip() {
-        return destinationZip;
+    public Integer getZip() {
+        return zip;
     }
 
     public String getPhoneNumber() {
@@ -104,20 +104,20 @@ public final class Delivery {
         this.clientName = clientName;
     }
 
-    public void setDestinationAdress(String destinationAdress) {
-        this.destinationAdress = destinationAdress;
+    public void setStreet(String street) {
+        this.street = street;
     }
 
-    public void setDestinationCity(String destinationCity) {
-        this.destinationCity = destinationCity;
+    public void setCity(String city) {
+        this.city = city;
     }
 
-    public void setDestinationState(String destinationState) {
-        this.destinationState = destinationState;
+    public void setState(String state) {
+        this.state = state;
     }
 
-    public void setDestinationZip(Integer destinationZip) {
-        this.destinationZip = destinationZip;
+    public void setZip(Integer zip) {
+        this.zip = zip;
     }
 
     public void setPhoneNumber(String phoneNumber) {
@@ -159,12 +159,12 @@ public final class Delivery {
 //        String clientAddress = data[CLIENT_ADDRESS_INDEX];
 //        String clientCity = data[CLIENT_CITY_INDEX];
 //        String clientState = data[CLIENT_STATE_INDEX];
-//        Integer destinationZip = Integer.valueOf(data[DESTINATION_ZIP_INDEX]);
+//        Integer zip = Integer.valueOf(data[DESTINATION_ZIP_INDEX]);
 //        String phoneNumber = data[PHONE_NUMBER_INDEX];
 //        Integer orderNumber = Integer.valueOf(data[ORDER_NUMBER_INDEX]);
 //        Float volume = Float.valueOf(data[VOLUME_INDEX]);
 //        Integer quantity = Integer.valueOf(data[QUANTITY_INDEX]);
-//        return new Delivery(date, deliveryShift, clientName, clientAddress, clientCity, clientState, destinationZip,
+//        return new Delivery(date, deliveryShift, clientName, clientAddress, clientCity, clientState, zip,
 //                phoneNumber, orderNumber, volume, quantity);
 //    }
 
@@ -175,10 +175,10 @@ public final class Delivery {
                 "deliveryDate=" + deliveryDate +
                 ", deliveryShift=" + deliveryShift +
                 ", clientName='" + clientName + '\'' +
-                ", destinationAdress='" + destinationAdress + '\'' +
-                ", destinationCity='" + destinationCity + '\'' +
-                ", destinationState='" + destinationState + '\'' +
-                ", destinationZip=" + destinationZip +
+                ", street='" + street + '\'' +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", zip=" + zip +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", orderNumber='" + orderNumber + '\'' +
                 ", volumeNumber=" + volumeNumber +
