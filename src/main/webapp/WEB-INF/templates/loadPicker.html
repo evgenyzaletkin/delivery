@@ -1,0 +1,44 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <meta charset="UTF-8"/>
+    <title th:text="#{dispatcher.loads} ">Delivery</title>
+    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css"
+          th:href="@{/resources/css/bootstrap.min.css}"/>
+    <!--<link rel="script" href="/resources/scripts/jquery-2.1.4.min.js"-->
+          <!--th:href="@{/resources/scripts/jquery-2.1.4.min.js}"/>-->
+    <!--<link rel="script" href="/resources/scripts/app.js"-->
+          <!--th:href="@{/resources/scripts/app.js}"/>-->
+</head>
+<body>
+
+<div th:include="navigation::dispatcher_nav_bar"></div>
+<!--@thymesVar id="newDelivery" type="Delivery"-->
+<form action="/loads" method="post" th:action="@{/loads}">
+    <div class="form-group">
+        <div>
+            <label th:text="#{deliveries.date}">Date</label>
+            <input type="date" name="date"/>
+        </div>
+        <div>
+            <label th:text="#{deliveries.shift}">Delivery Shift</label>
+            <select class="form-control" name="shift">
+                <option th:each="shift : ${allShifts}"
+                        th:text="#{${'shift.' + shift}}"
+                        th:value="${shift}">
+                </option>
+            </select>
+        </div>
+        <div>
+            <button id="get_button" type="button" class="btn btn-default">Load results</button>
+        </div>
+        <div>
+            <input id="submit" hidden="hidden" class="btn btn-default" type="submit" th:value="#{ok}"/>
+        </div>
+    </div>
+</form>
+<script src="/resources/scripts/jquery-2.1.4.min.js"/>
+<script src="/resources/scripts/app.js"/>
+</body>
+</html>
