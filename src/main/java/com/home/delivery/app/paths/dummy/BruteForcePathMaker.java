@@ -68,4 +68,5 @@ public class BruteForcePathMaker implements PathMaker {
     String mapToAddress(Delivery d) {
         return d.getStreet() + ", " + d.getCity() + ", " + d.getState() + " " + d.getZip();
     }
+
 }

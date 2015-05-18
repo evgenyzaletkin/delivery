@@ -9,7 +9,7 @@ import java.util.Map;
 
 @Named
 @Scope("prototype")
-public class StatefulDistancesProvider implements DistancesProvider{
+public class StatefulDistancesProvider implements DistancesProvider<String>{
 
     private final GoogleMapsService mapsService;
     private Map<RouteElement, Integer> distances;

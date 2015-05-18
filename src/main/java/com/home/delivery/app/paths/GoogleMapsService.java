@@ -22,7 +22,6 @@ public class GoogleMapsService {
             "sensor=false";
     static final Log log = LogFactory.getLog(GoogleMapsService.class);
     static final int SIZE_LIMIT = 100;
-    final RestTemplate restTemplate = new RestTemplate();
     private long lastAccess = 0L;
     private static final Long AWAIT_TIME = 10000L;
 
@@ -88,6 +87,7 @@ public class GoogleMapsService {
 
     DistancesInfo getDistanceInfo (String origins, String destinations) {
         Map<String, String> parameters = ImmutableMap.of("origins", origins, "destinations", destinations);
+        RestTemplate restTemplate = new RestTemplate();
         return restTemplate.getForObject(URL, DistancesInfo.class, parameters);
     }
 

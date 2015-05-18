@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 @Named
-public class CachedDistancesProvider implements DistancesProvider{
+public class CachedDistancesProvider implements DistancesProvider<String>{
 
     private final GoogleMapsService mapsService;
 
