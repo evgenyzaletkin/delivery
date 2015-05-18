@@ -1,6 +1,7 @@
 package com.home.delivery.app.paths.tsp;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,10 @@ public class Tour<T>
         newPoints.add(point);
         int newDistance = distance + distanceToPoint;
         return new Tour<>(newPoints, newDistance);
+    }
+
+    public List<T> getPath() {
+        return Collections.unmodifiableList(points);
     }
 
     @Override

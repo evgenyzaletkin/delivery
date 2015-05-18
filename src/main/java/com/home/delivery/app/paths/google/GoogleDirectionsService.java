@@ -2,7 +2,7 @@ package com.home.delivery.app.paths.google;
 
 import com.google.common.collect.ImmutableMap;
 import com.home.delivery.app.Delivery;
-import com.home.delivery.app.paths.PathMaker;
+import com.home.delivery.app.paths.RoutingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -14,7 +14,8 @@ import java.util.stream.Collectors;
  * Created by evgeny on 14.05.15.
  */
 @Named
-public class GoogleDirectionsService implements PathMaker {
+public class GoogleDirectionsService implements RoutingService
+{
 
     private static final String URL = "http://maps.googleapis.com/maps/api/directions/json?" +
             "origin={origin}&" +
@@ -29,7 +30,7 @@ public class GoogleDirectionsService implements PathMaker {
 
 
     @Override
-    public List<Delivery> makeTheShortestPath(List<Delivery> deliveries) {
+    public List<Delivery> buildRoute(List<Delivery> deliveries) {
         String origin = buildAddressString(ORIGIN_CITY, ORIGIN_STATE, "");
         String waypoints = buildWaypoints(deliveries);
         List<Leg> legs = getLegs(waypoints, origin, origin);

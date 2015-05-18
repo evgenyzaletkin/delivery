@@ -7,6 +7,6 @@ import java.util.List;
 /**
  * Created by evgeny on 16.05.15.
  */
-public interface PathMaker {
-    public List<Delivery> makeTheShortestPath(List<Delivery> deliveries);
+public interface RoutingService {
+    public List<Delivery> buildRoute(List<Delivery> deliveries);
 }

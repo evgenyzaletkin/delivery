@@ -11,7 +11,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
 
 @Named
 public class GoogleMapsService {
@@ -59,15 +58,12 @@ public class GoogleMapsService {
     synchronized List<Row> getDistanceRows(List<String> origins, List<String> destinations) {
         checkArgument(destinations.size() <= SIZE_LIMIT, "Limitation of destinations is exceeded");
         int originsSize = SIZE_LIMIT / origins.size();
-        List<Row> resultedRows = new ArrayList<>(origins.size() * destinations.size());
+        List<Row> resultedRows = new ArrayList<>(origins.size());
         String destinationString = convertToString(destinations);
-        for (int i = 0; i < origins.size(); i+=originsSize) {
+        for (int i = 0; i < origins.size(); i += originsSize) {
             int toIndex = i + originsSize > origins.size() - 1 ? origins.size() : i + originsSize;
             String originString = convertToString(origins.subList(i, toIndex));
             DistancesInfo info = getDistanceInfo(originString, destinationString);
-            performAwaitCheck();
-            System.out.println(info.status);
-            checkState(info.status.contains("OK"), "Response from server is not OK: %s ", info.status);
             resultedRows.addAll(Arrays.asList(info.rows));
         }
         return resultedRows;
@@ -77,22 +73,39 @@ public class GoogleMapsService {
         long delay = System.currentTimeMillis() - lastAccess;
         lastAccess = System.currentTimeMillis();
         if (delay < AWAIT_TIME) {
-            try {
-                Thread.sleep(AWAIT_TIME - delay);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            sleep(AWAIT_TIME - delay);
+        }
+    }
+
+    private void sleep(long time) {
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e){
+            throw new RuntimeException(e);
         }
     }
 
     DistancesInfo getDistanceInfo (String origins, String destinations) {
         Map<String, String> parameters = ImmutableMap.of("origins", origins, "destinations", destinations);
         RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.getForObject(URL, DistancesInfo.class, parameters);
+        int attempts = 3;
+        String errorCode = "";
+        //Google maps accepts only one request per 10 seconds.
+        performAwaitCheck();
+        for (int i = 1; i <= attempts; i++ ) {
+            DistancesInfo info = restTemplate.getForObject(URL, DistancesInfo.class, parameters);
+            if (info.status.contains("OK")) return info;
+            else {
+                errorCode = info.status;
+                //In case of bad response there is a reason to repeat request after some delay
+                sleep(AWAIT_TIME * i);
+            }
+        }
+        throw new IllegalStateException(String.format("Can't get response from server: [%s]", errorCode));
     }
 
     String convertToString(Collection<String> elements) {
-        return elements.stream().collect(Collectors.joining("|")).replaceAll(" ", "+");
+        return elements.stream().map(s -> s.replaceAll(" ", "+")).collect(Collectors.joining("|"));
     }
 
 

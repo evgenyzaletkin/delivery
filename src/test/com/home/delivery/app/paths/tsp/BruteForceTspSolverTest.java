@@ -11,7 +11,7 @@ public class BruteForceTspSolverTest
     public void testFindMinPath() throws Exception
     {
         String origin = "A0";
-        int n = 15;
+        int n = 10;
         List<String> waypoints = new ArrayList<>(n);
         for (int i = 0; i <= n; i++) {
             waypoints.add("A" + i);
@@ -27,7 +27,7 @@ public class BruteForceTspSolverTest
                 String key = from + "->" + to;
                 if (!distances.containsKey(key)) {
                     String reversed = to + "->" + from;
-                    int dis = rand.nextInt(10) + 50;
+                    int dis = rand.nextInt(50) + 10;
                     distances.put(key, dis);
                     distances.put(reversed, dis);
                 }

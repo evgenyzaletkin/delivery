@@ -3,6 +3,7 @@ package com.home.delivery.app.paths.tsp;
 import com.home.delivery.app.paths.DistancesProvider;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,12 +12,12 @@ public class BruteForceTspSolver<T> implements TspSolver<T>
 {
 
     final T origin;
-    private final List<T> source;
+    private final Collection<T> source;
     private final DistancesProvider<T> distancesProvider;
 
     private Tour<T> minTour;
 
-    public BruteForceTspSolver(T origin, List<T> source, DistancesProvider<T> distancesProvider) {
+    public BruteForceTspSolver(T origin, Collection<T> source, DistancesProvider<T> distancesProvider) {
         this.origin = origin;
         this.source = source;
         this.distancesProvider = distancesProvider;
@@ -32,10 +33,12 @@ public class BruteForceTspSolver<T> implements TspSolver<T>
     private void findMinTourRecursively(Tour<T> tour) {
         if (tour.distance < minTour.distance) {
             List<T> unvisited = source.stream().filter(t -> !tour.points.contains(t)).collect(Collectors.toList());
-            if (unvisited.isEmpty()) minTour = tour;
             T last = tour.getLast();
-            for (T p : unvisited) {
-                findMinTourRecursively(tour.add(p, distancesProvider.getDistance(p, last)));
+            if (unvisited.isEmpty()) {
+                Tour<T> newTour = tour.add(origin, distancesProvider.getDistance(last, origin));
+                if (newTour.distance < minTour.distance) minTour = newTour;
+            } else {
+                unvisited.forEach(p -> findMinTourRecursively(tour.add(p, distancesProvider.getDistance(last, p))));
             }
         }
     }
