@@ -5,6 +5,8 @@ import com.home.delivery.app.paths.*;
 import com.home.delivery.app.paths.tsp.BruteForceTspSolver;
 import com.home.delivery.app.paths.tsp.Tour;
 import com.home.delivery.app.paths.tsp.TspSolver;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -20,7 +22,7 @@ public class BruteForceRoutingService implements RoutingService
 {
 
     final GoogleMapsService googleMapsService;
-
+    private static final Log log = LogFactory.getLog(BruteForceRoutingService.class);
 
     @Inject
     public BruteForceRoutingService(GoogleMapsService googleMapsService) {
@@ -37,6 +39,7 @@ public class BruteForceRoutingService implements RoutingService
         DistancesProvider<String> distancesProvider = new SimpleDistanceProvider(distances);
         TspSolver<String> tspSolver = new BruteForceTspSolver<>(ORIGIN_ADDRESS, groupedByAddress.keySet(), distancesProvider);
         Tour<String> optimal = tspSolver.findMinPath();
+        log.info(String.format("The found tour is %s", optimal));
         return optimal.getPath().stream().
                 filter(s -> !s.equals(ORIGIN_ADDRESS)).
                 flatMap(s -> groupedByAddress.get(s).stream()).

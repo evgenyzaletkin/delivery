@@ -8,6 +8,8 @@
           th:href="@{/resources/css/bootstrap.min.css}"/>
 </head>
 <body>
+
+<div th:include="navigation::dispatcher_nav_bar"></div>
 <!--@thymesVar id="newDelivery" type="Delivery"-->
 <form action="/deliveries" method="post" th:action="@{/deliveries}" th:object="${delivery}">
     <div class="form-group">
