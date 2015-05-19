@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<form action="test" method="post">
+    <table class="table-striped">
+        <thead>
+        <tr>
+            <td></td>
+            <td>Order Number</td>
+            <td>Shift</td>
+            <td>Volume</td>
+        </tr>
+        </thead>
+        <tbody id="assigned">
+        <tr>
+            <td><input type="checkbox"/></td>
+            <td>1</td>
+            <td></td>
+            <td>10</td>
+        </tr>
+        <tr>
+            <td><input type="checkbox"/></td>
+            <td>2</td>
+            <td>M</td>
+            <td>20</td>
+        </tr>
+        <tr>
+            <td><input type="checkbox"/></td>
+            <td>3</td>
+            <td>E</td>
+            <td>10</td>
+        </tr>
+        </tbody>
+    </table>
+    <input id="submit" type="submit" value="ok"/>
+</form>
+<div id="errors" class="alert alert-danger" hidden="hidden">
+</div>
+<div id="warns" class="alert alert-warning" hidden="hidden">
+</div>
+<div class="btn-group">
+    <button id="up" class="glyphicon glyphicon-arrow-up btn btn-default"></button>
+    <button id="down" class="glyphicon glyphicon-arrow-down btn btn-default"></button>
+</div>
+<table class="table-striped">
+    <thead>
+    <tr>
+        <td></td>
+        <td>Order Number</td>
+        <td>Shift</td>
+        <td>Volume</td>
+    </tr>
+    </thead>
+    <tbody id="unassigned">
+    <tr>
+        <td><input type="checkbox"/></td>
+        <td>4</td>
+        <td></td>
+        <td>5</td>
+    </tr>
+    <tr>
+        <td><input type="checkbox"/></td>
+        <td>5</td>
+        <td>A</td>
+        <td>15</td>
+    </tr>
+    <tr>
+        <td><input type="checkbox"/></td>
+        <td>6</td>
+        <td>M</td>
+        <td>30</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
