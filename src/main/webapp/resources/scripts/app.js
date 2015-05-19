@@ -13,17 +13,14 @@ $(document).ready(function() {
         var sum = 0;
         for (var i = 0; i < rows.length; i++) {
             var cells = $(rows[i]).children();
-            sum += parseInt($(cells[3]).text());
+            sum += parseFloat($(cells[3]).text());
         }
         console.log(sum);
-        $("#volume").remove();
-        if (sum > 50) {
+        if (sum > 1400.0) {
             $ ("#errors").show();
-            $('<p id="volume">').text("Volume is more than allowed volume").appendTo("#errors");
             return false;
         } else {
             $ ("#errors").hide();
-            $("#volume").remove();
             return true;
         }
     };
@@ -56,5 +53,6 @@ $(document).ready(function() {
         }
         validate();
     });
+
 });
     

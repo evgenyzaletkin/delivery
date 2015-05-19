@@ -28,6 +28,7 @@ public final class Delivery {
     @NotEmpty private String orderNumber;
     @Min(0) private Float volumeNumber;
     @Min(1) private Integer quantity;
+    private Load load;
 
     public Delivery() {
     }
@@ -52,122 +53,97 @@ public final class Delivery {
         return deliveryDate;
     }
 
-    public DeliveryShift getDeliveryShift() {
-        return deliveryShift;
-    }
-
-    public String getClientName() {
-        return clientName;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public Integer getZip() {
-        return zip;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public String getOrderNumber() {
-        return orderNumber;
-    }
-
-    public Float getVolumeNumber() {
-        return volumeNumber;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
     public void setDeliveryDate(LocalDate deliveryDate) {
         this.deliveryDate = deliveryDate;
+    }
+
+    public DeliveryShift getDeliveryShift() {
+        return deliveryShift;
     }
 
     public void setDeliveryShift(DeliveryShift deliveryShift) {
         this.deliveryShift = deliveryShift;
     }
 
+    public String getClientName() {
+        return clientName;
+    }
+
     public void setClientName(String clientName) {
         this.clientName = clientName;
+    }
+
+    public String getStreet() {
+        return street;
     }
 
     public void setStreet(String street) {
         this.street = street;
     }
 
+    public String getCity() {
+        return city;
+    }
+
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getState() {
+        return state;
     }
 
     public void setState(String state) {
         this.state = state;
     }
 
+    public Integer getZip() {
+        return zip;
+    }
+
     public void setZip(Integer zip) {
         this.zip = zip;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+
     public void setOrderNumber(String orderNumber) {
         this.orderNumber = orderNumber;
+    }
+
+    public Float getVolumeNumber() {
+        return volumeNumber;
     }
 
     public void setVolumeNumber(Float volumeNumber) {
         this.volumeNumber = volumeNumber;
     }
 
+    public Integer getQuantity() {
+        return quantity;
+    }
+
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
-    //    private final static int FIELDS_COUNT = 10;
-//    private final static int DATE_INDEX = 0;
-//    private final static int SHIFT_INDEX = 1;
-//    private final static int CLIENT_NAME_INDEX = 8;
-//    private final static int CLIENT_ADDRESS_INDEX = 9;
-//    private final static int CLIENT_CITY_INDEX = 10;
-//    private final static int CLIENT_STATE_INDEX = 11;
-//    private final static int DESTINATION_ZIP_INDEX = 12;
-//    private final static int PHONE_NUMBER_INDEX = 14;
-//    private final static int ORDER_NUMBER_INDEX = 16;
-//    private final static int VOLUME_INDEX = 17;
-//    private final static int QUANTITY_INDEX = 18;
+    public Load getLoad() {
+        return load;
+    }
 
-
-//    public static Delivery fromArray(@Nonnull String[] data) {
-//        checkNotNull(data);
-//        checkArgument(data.length == FIELDS_COUNT);
-//        LocalDate date = LocalDate.parse(data[DATE_INDEX]);
-//        DeliveryShift deliveryShift = DeliveryShift.fromLetter(data[SHIFT_INDEX]);
-//        String clientName = data[CLIENT_NAME_INDEX];
-//        String clientAddress = data[CLIENT_ADDRESS_INDEX];
-//        String clientCity = data[CLIENT_CITY_INDEX];
-//        String clientState = data[CLIENT_STATE_INDEX];
-//        Integer zip = Integer.valueOf(data[DESTINATION_ZIP_INDEX]);
-//        String phoneNumber = data[PHONE_NUMBER_INDEX];
-//        Integer orderNumber = Integer.valueOf(data[ORDER_NUMBER_INDEX]);
-//        Float volume = Float.valueOf(data[VOLUME_INDEX]);
-//        Integer quantity = Integer.valueOf(data[QUANTITY_INDEX]);
-//        return new Delivery(date, deliveryShift, clientName, clientAddress, clientCity, clientState, zip,
-//                phoneNumber, orderNumber, volume, quantity);
-//    }
-
+    public void setLoad(Load load) {
+        this.load = load;
+    }
 
     @Override
     public String toString() {

@@ -1,10 +1,10 @@
 package com.home.delivery.app;
 
-import com.google.common.collect.ImmutableList;
 import com.home.delivery.app.paths.tsp.Tour;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -12,39 +12,66 @@ import java.util.List;
  */
 @ThreadSafe
 public final class Load {
-    private final Tour<String> tour;
-    private final DeliveryShift shift;
-    private final LocalDate date;
-    private final List<Delivery> deliveries;
-    private volatile boolean isRouted = false;
+    private Tour<String> tour;
+    private DeliveryShift shift;
+    private LocalDate date;
+    private List<Delivery> deliveries = Collections.emptyList();
+    private boolean isRouted = false;
 
-    public Load(List<Delivery> deliveries,
-                Tour<String> tour,
-                DeliveryShift shift,
-                LocalDate date) {
-        this.tour = tour;
-        this.date = date;
-        this.shift = shift;
-        this.deliveries = ImmutableList.copyOf(deliveries);
+    public Load() {
+
     }
+
+
 
     public Tour<String> getTour() {
         return tour;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public void setTour(Tour<String> tour) {
+        this.tour = tour;
     }
 
     public DeliveryShift getShift() {
         return shift;
     }
 
+    public void setShift(DeliveryShift shift) {
+        this.shift = shift;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
     public List<Delivery> getDeliveries() {
         return deliveries;
     }
 
+    public void setDeliveries(List<Delivery> deliveries) {
+        this.deliveries = deliveries;
+    }
+
     public boolean isRouted() {
         return isRouted;
+    }
+
+    public void setIsRouted(boolean isRouted) {
+        this.isRouted = isRouted;
+    }
+
+    @Override
+    public String toString() {
+        return "Load{" +
+                "tour=" + tour +
+                ", shift=" + shift +
+                ", date=" + date +
+                ", deliveries=" + deliveries +
+                ", isRouted=" + isRouted +
+                '}';
     }
 }

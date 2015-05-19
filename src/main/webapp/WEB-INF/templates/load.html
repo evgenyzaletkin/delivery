@@ -1,80 +1,44 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
 <head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
+    <meta charset="UTF-8"/>
+    <title th:text="#{loads.manage_load}">Manage Load</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
 </head>
 <body>
-<form action="test" method="post">
-    <table class="table-striped">
-        <thead>
-        <tr>
-            <td></td>
-            <td>Order Number</td>
-            <td>Shift</td>
-            <td>Volume</td>
-        </tr>
-        </thead>
-        <tbody id="assigned">
-        <tr>
-            <td><input type="checkbox"/></td>
-            <td>1</td>
-            <td></td>
-            <td>10</td>
-        </tr>
-        <tr>
-            <td><input type="checkbox"/></td>
-            <td>2</td>
-            <td>M</td>
-            <td>20</td>
-        </tr>
-        <tr>
-            <td><input type="checkbox"/></td>
-            <td>3</td>
-            <td>E</td>
-            <td>10</td>
-        </tr>
-        </tbody>
-    </table>
+
+<div th:include="navigation::dispatcher_nav_bar"></div>
+
+<form action="/loads" th:action="@{/loads}" method="post" th:object="${load}">
+
+    <div>
+        <label th:text="#{deliveries.date}">Date</label>
+        <input type="text" readonly="readonly" th:field="*{date}" th:value="*{date}"/>
+    </div>
+
+    <div>
+        <label th:text="#{deliveries.shift}">Shift</label>
+        <input type="text" readonly="readonly" th:field="*{shift}" th:value="#{${'shift.' + load.shift}}"/>
+    </div>
+
+    <div th:include="loadsTable::table (assigned,*{deliveries})">...</div>
     <input id="submit" type="submit" value="ok"/>
 </form>
 <div id="errors" class="alert alert-danger" hidden="hidden">
+    <p th:text="#{loads.volume.error}">The maximum volume is exceeded</p>
 </div>
 <div id="warns" class="alert alert-warning" hidden="hidden">
+    <p th:text="#{loads.shift.error}">Some deliveries are wanted to be deliveries at the different time</p>
 </div>
 <div class="btn-group">
     <button id="up" class="glyphicon glyphicon-arrow-up btn btn-default"></button>
     <button id="down" class="glyphicon glyphicon-arrow-down btn btn-default"></button>
 </div>
-<table class="table-striped">
-    <thead>
-    <tr>
-        <td></td>
-        <td>Order Number</td>
-        <td>Shift</td>
-        <td>Volume</td>
-    </tr>
-    </thead>
-    <tbody id="unassigned">
-    <tr>
-        <td><input type="checkbox"/></td>
-        <td>4</td>
-        <td></td>
-        <td>5</td>
-    </tr>
-    <tr>
-        <td><input type="checkbox"/></td>
-        <td>5</td>
-        <td>A</td>
-        <td>15</td>
-    </tr>
-    <tr>
-        <td><input type="checkbox"/></td>
-        <td>6</td>
-        <td>M</td>
-        <td>30</td>
-    </tr>
-    </tbody>
-</table>
+
+<div th:include="loadsTable::table (unassigned, ${deliveries})">...</div>
+
+<script src="http://code.jquery.com/jquery-2.1.4.min.js"/>
+<script src="/resources/scripts/app.js"/>
 </body>
 </html>

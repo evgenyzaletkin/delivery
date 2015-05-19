@@ -1,0 +1,46 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Larkin LLC</title>
+    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css"
+          th:href="@{/resources/css/bootstrap.min.css}"/>
+    <!--<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />-->
+    <!--<link rel="stylesheet" type="text/css" media="all"-->
+    <!--href="../../css/gtvg.css" th:href="@{/css/gtvg.css}" />-->
+</head>
+
+<body>
+<div th:fragment="table (tbodyId, deliveries)">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <td></td>
+            <td th:text="#{deliveries.number}">Order Number</td>
+            <td th:text="#{deliveries.shift}">Shift</td>
+            <td th:text="#{deliveries.volume}">Volume</td>
+            <td th:text="#{deliveries.city}">City</td>
+            <td th:text="#{deliveries.address}">Street</td>
+            <td th:text="#{deliveries.zip}">Street</td>
+        </tr>
+        </thead>
+
+        <tbody th:id="${tbodyId}">
+        <tr th:each="d : ${deliveries}">
+            <td><input type="checkbox"/></td>
+            <td><input type="text" readonly="readonly" name="delivery" th:value="${d.orderNumber}"/> </td>
+            <td th:text="${d.deliveryShift == null} ? '' : #{${'shift.' + d.deliveryShift}}">M</td>
+            <td th:text="${d.volumeNumber}"></td>
+            <td th:text="${d.city}">New York</td>
+            <td th:text="${d.street}">1080 Bearses way</td>
+            <td th:text="${d.zip}">23800</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+
+</html>

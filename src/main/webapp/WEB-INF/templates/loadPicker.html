@@ -4,8 +4,7 @@
 <head lang="en">
     <meta charset="UTF-8"/>
     <title th:text="#{dispatcher.loads} ">Delivery</title>
-    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css"
-          th:href="@{/resources/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
     <!--<link rel="script" href="/resources/scripts/jquery-2.1.4.min.js"-->
           <!--th:href="@{/resources/scripts/jquery-2.1.4.min.js}"/>-->
     <!--<link rel="script" href="/resources/scripts/app.js"-->
@@ -15,7 +14,7 @@
 
 <div th:include="navigation::dispatcher_nav_bar"></div>
 <!--@thymesVar id="newDelivery" type="Delivery"-->
-<form action="/loads" method="post" th:action="@{/loads}">
+<form action="/loads" method="get" th:action="@{/loads}">
     <div class="form-group">
         <div>
             <label th:text="#{deliveries.date}">Date</label>
@@ -31,14 +30,11 @@
             </select>
         </div>
         <div>
-            <button id="get_button" type="button" class="btn btn-default">Load results</button>
-        </div>
-        <div>
-            <input id="submit" hidden="hidden" class="btn btn-default" type="submit" th:value="#{ok}"/>
+            <input id="submit" class="btn btn-default" type="submit" th:value="#{ok}"/>
         </div>
     </div>
 </form>
-<script src="/resources/scripts/jquery-2.1.4.min.js"/>
-<script src="/resources/scripts/app.js"/>
+<!--<script src="http://code.jquery.com/jquery-2.1.4.min.js"/>-->
+<!--<script src="/resources/scripts/app.js"/>-->
 </body>
 </html>

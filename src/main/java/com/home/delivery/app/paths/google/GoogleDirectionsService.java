@@ -6,14 +6,12 @@ import com.home.delivery.app.paths.RoutingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import javax.inject.Named;
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * Created by evgeny on 14.05.15.
  */
-@Named
 public class GoogleDirectionsService implements RoutingService
 {
 

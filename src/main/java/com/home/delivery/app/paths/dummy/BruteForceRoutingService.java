@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 /**
  * Created by evgeny on 16.05.15.
  */
+@Named
 public class BruteForceRoutingService implements RoutingService
 {
 
