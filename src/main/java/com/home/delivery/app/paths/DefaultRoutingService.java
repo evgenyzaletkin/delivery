@@ -1,7 +1,6 @@
-package com.home.delivery.app.paths.dummy;
+package com.home.delivery.app.paths;
 
 import com.home.delivery.app.Delivery;
-import com.home.delivery.app.paths.*;
 import com.home.delivery.app.paths.tsp.BruteForceTspSolver;
 import com.home.delivery.app.paths.tsp.Tour;
 import com.home.delivery.app.paths.tsp.TspSolver;
@@ -20,14 +19,14 @@ import java.util.stream.Collectors;
  * Created by evgeny on 16.05.15.
  */
 @Named
-public class BruteForceRoutingService implements RoutingService
+public class DefaultRoutingService implements RoutingService
 {
 
     final GoogleMapsService googleMapsService;
-    private static final Log log = LogFactory.getLog(BruteForceRoutingService.class);
+    private static final Log log = LogFactory.getLog(DefaultRoutingService.class);
 
     @Inject
-    public BruteForceRoutingService(GoogleMapsService googleMapsService) {
+    public DefaultRoutingService(GoogleMapsService googleMapsService) {
         this.googleMapsService = googleMapsService;
     }
 

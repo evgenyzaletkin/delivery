@@ -46,7 +46,7 @@ public class GoogleMapsService {
             for (String destination : destinations) {
                 RouteElement key = new RouteElement(origin, destination);
                 Integer value = elements[elementIndex].distance.value;
-                log.info(String.format("Putting key %s, value %s into result", key, value));
+                log.debug(String.format("Putting key %s, value %s into result", key, value));
                 result.put(key, value);
                 elementIndex++;
             }
@@ -101,6 +101,7 @@ public class GoogleMapsService {
                 sleep(AWAIT_TIME * i);
             }
         }
+        log.error(String.format("Can't get response from server: [%s]", errorCode));
         throw new IllegalStateException(String.format("Can't get response from server: [%s]", errorCode));
     }
 

@@ -1,6 +1,7 @@
 package com.home.delivery.app.paths.dummy;
 
 import com.home.delivery.app.Delivery;
+import com.home.delivery.app.paths.DefaultRoutingService;
 import com.home.delivery.app.paths.GoogleMapsService;
 import org.junit.Test;
 
@@ -44,7 +45,7 @@ public class BruteForceRoutingServiceTest
         }).collect(Collectors.toList());
 
         GoogleMapsService googleMapsService = new GoogleMapsService();
-        BruteForceRoutingService routingService = new BruteForceRoutingService(googleMapsService);
+        DefaultRoutingService routingService = new DefaultRoutingService(googleMapsService);
         List<Delivery> deliveries1 = routingService.buildRoute(deliveries);
         System.out.println(deliveries1);
     }

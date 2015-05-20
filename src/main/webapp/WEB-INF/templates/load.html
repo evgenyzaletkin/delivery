@@ -22,22 +22,33 @@
         <input type="text" readonly="readonly" th:field="*{shift}" th:value="#{${'shift.' + load.shift}}"/>
     </div>
 
-    <div th:include="loadsTable::table (assigned,*{deliveries})">...</div>
-    <input id="submit" type="submit" value="ok"/>
+    <div class="panel panel-default">
+        <div class="panel-heading" th:text="#{loads.assigned}"></div>
+        <div class="panel-body">
+            <p th:text="#{loads.message}"></p>
+        </div>
+        <div th:include="loadsTable::table (assigned,*{deliveries})">...</div>
+    </div>
+    <!--<input id="submit" type="submit" value="ok"/>-->
+    <button class="btn btn-default" th:text="#{loads.submit}" value="ok">submit</button>
 </form>
-<div id="errors" class="alert alert-danger" hidden="hidden">
-    <p th:text="#{loads.volume.error}">The maximum volume is exceeded</p>
-</div>
-<div id="warns" class="alert alert-warning" hidden="hidden">
-    <p th:text="#{loads.shift.error}">Some deliveries are wanted to be deliveries at the different time</p>
-</div>
+
 <div class="btn-group">
     <button id="up" class="glyphicon glyphicon-arrow-up btn btn-default"></button>
     <button id="down" class="glyphicon glyphicon-arrow-down btn btn-default"></button>
 </div>
 
-<div th:include="loadsTable::table (unassigned, ${deliveries})">...</div>
+<div id="errors" class="alert alert-danger" hidden="hidden">
+    <p th:text="#{loads.volume.error}">The maximum volume is exceeded</p>
+</div>
+<div id="warns" class="alert alert-warning" hidden="hidden">
+    <p th:text="#{loads.shift.error}">Some deliveries are wanted to be delivered at the different time</p>
+</div>
 
+<div class="panel panel-default">
+    <div class="panel-heading" th:text="#{loads.free}"></div>
+    <div th:include="loadsTable::table (unassigned, ${deliveries})">...</div>
+</div>
 <script src="http://code.jquery.com/jquery-2.1.4.min.js"/>
 <script src="/resources/scripts/app.js"/>
 </body>
