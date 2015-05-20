@@ -19,7 +19,8 @@
 
     <div>
         <label th:text="#{deliveries.shift}">Shift</label>
-        <input type="text" readonly="readonly" th:field="*{shift}" th:value="#{${'shift.' + load.shift}}"/>
+        <input type="text" readonly="readonly" th:value="#{${'shift.' + load.shift}}"/>
+        <input type="text" hidden="hidden" th:field="*{shift}"/>
     </div>
 
     <div class="panel panel-default">
@@ -30,7 +31,7 @@
         <div th:include="loadsTable::table (assigned,*{deliveries})">...</div>
     </div>
     <!--<input id="submit" type="submit" value="ok"/>-->
-    <button class="btn btn-default" th:text="#{loads.submit}" value="ok">submit</button>
+    <button id="submit" class="btn btn-default" th:text="#{loads.submit}" value="ok">submit</button>
 </form>
 
 <div class="btn-group">
