@@ -9,15 +9,14 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by evgeny on 08.05.15.
@@ -37,17 +36,20 @@ public class DeliveryController {
         this.deliveriesService = deliveriesService;
     }
 
+
     @RequestMapping(method = RequestMethod.GET)
-    public String getAllDeliveries(Model model) {
-        List<Delivery> sortedByDate = deliveriesService.getAllDeliveries().
-                stream().
-                sorted((d1, d2) -> {
-                    if (d1.getDeliveryDate() == null) return 1;
-                    if (d2.getDeliveryDate() == null) return -1;
-                    return d1.getDeliveryDate().compareTo(d2.getDeliveryDate());
-                }).
-                collect(Collectors.toList());
-        model.addAttribute(DELIVERIES_ATTRIBUTE, sortedByDate);
+    public String getDeliveries(Model model,
+                                @RequestParam(value = "date", required = false) LocalDate nullableDate,
+                                @RequestParam(value = "corrupted", defaultValue = "False") Boolean corrupted,
+                                @RequestParam(value = "not_loaded", defaultValue = "False") Boolean notLoaded){
+        LocalDate date = nullableDate == null ? LocalDate.of(2014, 9, 15) : nullableDate;
+        Stream<Delivery> stream = deliveriesService.getAllDeliveries().stream();
+        stream = stream.filter(d -> date.isEqual(d.getDeliveryDate()));
+        stream = corrupted ? stream.filter(DeliveriesService.CORRUPTED) : stream;
+        stream = notLoaded ? stream.filter(d -> d.getLoad() == null) : stream;
+        List<Delivery> deliveries = stream.collect(Collectors.toList());
+        model.addAttribute(DELIVERIES_ATTRIBUTE, deliveries);
+        model.addAttribute("date", date);
         return "deliveries";
     }
 

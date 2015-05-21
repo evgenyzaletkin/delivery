@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -45,8 +42,9 @@ public class LoadsController {
     public String showLoad(@RequestParam("date")LocalDate date, @RequestParam("shift") DeliveryShift shift, Model model) {
         Load load = loadsService.getLoad(date, shift);
         model.addAttribute("load", load);
-        List<Delivery> freeDeliveries = deliveriesService.getDeliveriesByDate(date).
+        List<Delivery> freeDeliveries = deliveriesService.getAllDeliveries().
                 stream().
+                filter(d -> date.isEqual(d.getDeliveryDate())).
                 filter(d -> d.getLoad() == null).
                 collect(Collectors.toList());
         model.addAttribute("deliveries", freeDeliveries);
@@ -54,7 +52,8 @@ public class LoadsController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String updateLoad(Load load, @RequestParam(value = "delivery", required = true) List<String> deliveriesId) {
+    public String updateLoad(Load load,
+                             @RequestParam(value = "delivery", defaultValue = "") List<String> deliveriesId) {
         List<Delivery> deliveries = deliveriesId.stream().
                 map(deliveriesService::getDelivery).
                 filter(Optional::isPresent).
@@ -63,7 +62,7 @@ public class LoadsController {
         deliveries.forEach(d -> d.setLoad(load));
         load.setDeliveries(deliveries);
         loadsService.updateLoad(load);
-        return "redirect:deliveries";
+        return "redirect:deliveries?date=" + load.getDate() + "&not_loaded=true";
     }
 
     @ModelAttribute(ALL_SHIFTS_ATTRIBUTE)

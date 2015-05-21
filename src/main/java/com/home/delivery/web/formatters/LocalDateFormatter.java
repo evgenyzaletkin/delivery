@@ -14,7 +14,7 @@ import java.util.Locale;
  */
 public class LocalDateFormatter implements Formatter<LocalDate> {
 
-    private static final String MESSAGE_ID = "date_format";
+    private static final String MESSAGE_ID = "date.format";
     private final MessageSource messageSource;
 
     @Inject

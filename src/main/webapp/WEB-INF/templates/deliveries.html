@@ -4,53 +4,76 @@
 <head lang="en">
     <meta charset="UTF-8"/>
     <title th:text="#{deliveries.title}">Deliveries</title>
-    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.min.css"
-          th:href="@{/resources/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/resources/css/common.css"/>
 </head>
 <body>
 
 <div th:include="navigation::dispatcher_nav_bar"></div>
 
-<div class="row">
-    <div class="col-md-6">
-        <table th:unless="${#lists.isEmpty(deliveries)}" class="table table-striped">
-            <thead>
-            <tr>
-                <th th:text="#{deliveries.number}">Order Number</th>
-                <th th:text="#{deliveries.client}">Client Name</th>
-                <th th:text="#{deliveries.date}">Date</th>
-                <th th:text="#{deliveries.shift}">Shift</th>
-                <th th:text="#{deliveries.city}">City</th>
-                <th th:text="#{deliveries.address}">Address</th>
-                <th th:text="#{deliveries.volume}">Volume</th>
-                <th th:text="#{deliveries.quantity}">Quantity</th>
-                <th th:text="#{deliveries.total}">Total</th>
-                <th th:text="#{deliveries.phone}">Phone Number</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="d : ${deliveries}">
-                <td><a href="/deliveries"
-                       th:href="@{'/deliveries/' + ${d.orderNumber}}"
-                       th:text="${d.orderNumber}">Some Text</a>
-                </td>
-                <td th:text="${d.clientName}">Ivan</td>
-                <td th:text="${d.deliveryDate}">01-01-2015</td>
-                <td th:text="${d.deliveryShift == null} ? '' : #{${'shift.' + d.deliveryShift}}">M</td>
-                <td th:text="${d.city}">New York</td>
-                <td th:text="${d.street}">1080 Bearses way</td>
-                <td th:text="${d.volumeNumber}">60,8</td>
-                <td th:text="${d.quantity}">3</td>
-                <td th:text="${d.quantity * d.volumeNumber}">182,4</td>
-                <td th:text="${d.phoneNumber}">777-7-777</td>
-            </tr>
-            </tbody>
 
-        </table>
+<div class="container">
+
+    <div class="row">
+        <div class="col-md-12">
+            <form class="form-inline" action="/deliveries" method="get">
+                <div class="form-group">
+                    <label th:text="#{deliveries.date}">Date</label>
+                    <input type="date" name="date" th:value="${date}"/>
+                </div>
+                <div class="form-group">
+                    <label th:text="#{deliveries.corrupted}">Corrupted</label>
+                    <input type="checkbox" name="corrupted"/>
+                </div>
+                <div class="form-group">
+                    <label th:text="#{deliveries.not.loaded}">Not loaded</label>
+                    <input type="checkbox" name="not_loaded"/>
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table th:unless="${#lists.isEmpty(deliveries)}" class="table table-striped">
+                <thead>
+                <tr>
+                    <th th:text="#{deliveries.number}">Order Number</th>
+                    <th th:text="#{deliveries.client}">Client Name</th>
+                    <th th:text="#{deliveries.date}">Date</th>
+                    <th th:text="#{deliveries.shift}">Shift</th>
+                    <th th:text="#{deliveries.city}">City</th>
+                    <th th:text="#{deliveries.address}">Address</th>
+                    <th th:text="#{deliveries.volume}">Volume</th>
+                    <th th:text="#{deliveries.quantity}">Quantity</th>
+                    <th th:text="#{deliveries.phone}">Phone Number</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="d : ${deliveries}">
+                    <td><a href="/deliveries"
+                           th:href="@{'/deliveries/' + ${d.orderNumber}}"
+                           th:text="${d.orderNumber}">Some Text</a>
+                    </td>
+                    <td th:text="${d.clientName}">Ivan</td>
+                    <td th:text="${d.deliveryDate}">01-01-2015</td>
+                    <td th:text="${d.deliveryShift == null} ? '' : #{${'shift.' + d.deliveryShift}}">M</td>
+                    <td th:text="${d.city}">New York</td>
+                    <td th:text="${d.street}">1080 Bearses way</td>
+                    <td th:text="${d.volumeNumber}">60,8</td>
+                    <td th:text="${d.quantity}">3</td>
+                    <td th:text="${d.phoneNumber}">777-7-777</td>
+                </tr>
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+    <div th:if="${#lists.isEmpty(deliveries)}">
+        <p th:text="#{deliveries.empty}">No deliveries</p>
     </div>
 </div>
-<div th:if="${#lists.isEmpty(deliveries)}">
-    <p th:text="#{deliveries.empty}">No deliveries</p>
-</div>
+
 </body>
 </html>

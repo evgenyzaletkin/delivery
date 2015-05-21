@@ -1,16 +1,11 @@
 package com.home.delivery.app;
 
-import com.home.delivery.app.io.CSVFileReader;
-
-import javax.inject.Inject;
 import javax.inject.Named;
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 
 /**
  * Created by evgeny on 08.05.15.
@@ -19,12 +14,16 @@ import java.util.stream.Collectors;
 public class DeliveriesService {
 
     private final ConcurrentMap<String, Delivery> deliveries = new ConcurrentHashMap<>();
-    private final CSVFileReader csvFileReader;
 
-    @Inject
-    public DeliveriesService(CSVFileReader csvFileReader) {
-        this.csvFileReader = csvFileReader;
-    }
+    public static final Predicate<Delivery> CORRUPTED =
+            d -> d.getClientName() != null &&
+                    d.getOrderNumber() != null &&
+                    d.getDeliveryDate() != null &&
+                    d.getCity() != null &&
+                    d.getState() != null &&
+                    d.getStreet() != null &&
+                    d.getZip() != null &&
+                    d.getVolumeNumber() != null;
 
     public Collection<Delivery> getAllDeliveries() {
         return deliveries.values();
@@ -42,17 +41,5 @@ public class DeliveriesService {
         this.deliveries.remove(delivery.getOrderNumber());
     }
 
-    public List<Delivery> getDeliveriesByDate(LocalDate date) {
-        return deliveries.values().stream().filter(d -> date.isEqual(d.getDeliveryDate())).collect(Collectors.toList());
-    }
-
-    //ToDo WA, should be removed when uploading is available
-//    @PostConstruct
-//    private void loadAllDeliveries() {
-//        InputStream is = DeliveriesService.class.getClassLoader().getResourceAsStream("schedule.csv");
-//        InputStreamReader isr = new InputStreamReader(is);
-//        List<Delivery> deliveries = csvFileReader.readDeliveries(isr);
-//        addDeliveries(deliveries);
-//    }
 
 }

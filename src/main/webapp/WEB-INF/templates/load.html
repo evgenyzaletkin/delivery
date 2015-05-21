@@ -5,51 +5,79 @@
     <meta charset="UTF-8"/>
     <title th:text="#{loads.manage_load}">Manage Load</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/resources/css/common.css"/>
 </head>
 <body>
 
 <div th:include="navigation::dispatcher_nav_bar"></div>
+<div class="container">
 
-<form action="/loads" th:action="@{/loads}" method="post" th:object="${load}">
+    <form action="/loads" th:action="@{/loads}" method="post" th:object="${load}">
+        <div class="row" hidden="hidden">
+            <div class="col-md-6">
+                <div class="form-inline">
+                    <div>
+                        <label th:text="#{deliveries.date}">Date</label>
+                        <input type="text" readonly="readonly" th:field="*{date}" th:value="*{date}"/>
+                    </div>
 
-    <div>
-        <label th:text="#{deliveries.date}">Date</label>
-        <input type="text" readonly="readonly" th:field="*{date}" th:value="*{date}"/>
-    </div>
-
-    <div>
-        <label th:text="#{deliveries.shift}">Shift</label>
-        <input type="text" readonly="readonly" th:value="#{${'shift.' + load.shift}}"/>
-        <input type="text" hidden="hidden" th:field="*{shift}"/>
-    </div>
-
-    <div class="panel panel-default">
-        <div class="panel-heading" th:text="#{loads.assigned}"></div>
-        <div class="panel-body">
-            <p th:text="#{loads.message}"></p>
+                    <div>
+                        <label th:text="#{deliveries.shift}">Shift</label>
+                        <input type="text" readonly="readonly" th:value="#{${'shift.' + load.shift}}"/>
+                        <input type="text" hidden="hidden" th:field="*{shift}"/>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div th:include="loadsTable::table (assigned,*{deliveries})">...</div>
+
+        <div class="row">
+            <div class="panel panel-default col-md-12">
+                <div class="panel-heading" th:text="#{loads.assigned}"></div>
+                <div class="panel-body">
+                    <p th:text="#{loads.message}"></p>
+                </div>
+                <div th:include="loadsTable::table (assigned,*{deliveries})">...</div>
+            </div>
+        </div>
+        <!--<input id="submit" type="submit" value="ok"/>-->
+
+        <div class="row">
+            <div class="col-md-6">
+                <button id="submit" class="btn btn-default" th:text="#{loads.submit}" value="ok">submit</button>
+            </div>
+            <div class="col-md-6">
+                <div class="btn-group">
+                    <div id="up" class="glyphicon glyphicon-arrow-up btn btn-default"></div>
+                    <div id="down" class="glyphicon glyphicon-arrow-down btn btn-default"></div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div id="errors" class="alert alert-danger" hidden="hidden">
+                <p th:text="#{loads.volume.error}">The maximum volume is exceeded</p>
+            </div>
+        </div>
     </div>
-    <!--<input id="submit" type="submit" value="ok"/>-->
-    <button id="submit" class="btn btn-default" th:text="#{loads.submit}" value="ok">submit</button>
-</form>
 
-<div class="btn-group">
-    <button id="up" class="glyphicon glyphicon-arrow-up btn btn-default"></button>
-    <button id="down" class="glyphicon glyphicon-arrow-down btn btn-default"></button>
+    <div class="row">
+        <div class="col-md-8">
+            <div id="warns" class="alert alert-warning" hidden="hidden">
+                <p th:text="#{loads.shift.error}">Some deliveries are wanted to be delivered at the different time</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="panel panel-default col-md-12">
+            <div class="panel-heading" th:text="#{loads.free}"></div>
+            <div th:include="loadsTable::table (unassigned, ${deliveries})">...</div>
+        </div>
+    </div>
+
 </div>
 
-<div id="errors" class="alert alert-danger" hidden="hidden">
-    <p th:text="#{loads.volume.error}">The maximum volume is exceeded</p>
-</div>
-<div id="warns" class="alert alert-warning" hidden="hidden">
-    <p th:text="#{loads.shift.error}">Some deliveries are wanted to be delivered at the different time</p>
-</div>
-
-<div class="panel panel-default">
-    <div class="panel-heading" th:text="#{loads.free}"></div>
-    <div th:include="loadsTable::table (unassigned, ${deliveries})">...</div>
-</div>
 <script src="http://code.jquery.com/jquery-2.1.4.min.js"/>
 <script src="/resources/scripts/app.js"/>
 </body>

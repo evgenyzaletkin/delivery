@@ -5,35 +5,38 @@
     <meta charset="UTF-8"/>
     <title th:text="#{dispatcher.loads} ">Delivery</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/resources/css/common.css"/>
     <!--<link rel="script" href="/resources/scripts/jquery-2.1.4.min.js"-->
-          <!--th:href="@{/resources/scripts/jquery-2.1.4.min.js}"/>-->
+    <!--th:href="@{/resources/scripts/jquery-2.1.4.min.js}"/>-->
     <!--<link rel="script" href="/resources/scripts/app.js"-->
-          <!--th:href="@{/resources/scripts/app.js}"/>-->
+    <!--th:href="@{/resources/scripts/app.js}"/>-->
 </head>
 <body>
 
 <div th:include="navigation::dispatcher_nav_bar"></div>
 <!--@thymesVar id="newDelivery" type="Delivery"-->
-<form action="/loads" method="get" th:action="@{/loads}">
-    <div class="form-group">
-        <div>
-            <label th:text="#{deliveries.date}">Date</label>
-            <input type="date" name="date" value="2014-09-14"/>
-        </div>
-        <div>
-            <label th:text="#{deliveries.shift}">Delivery Shift</label>
-            <select class="form-control" name="shift">
-                <option th:each="shift : ${allShifts}"
-                        th:text="#{${'shift.' + shift}}"
-                        th:value="${shift}">
-                </option>
-            </select>
-        </div>
-        <div>
-            <input id="submit" class="btn btn-default" type="submit" th:value="#{ok}"/>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <form class="form-inline" action="/loads" method="get" th:action="@{/loads}">
+                <div class="form-group">
+                    <label th:text="#{deliveries.date}">Date</label>
+                    <input type="date" name="date" th:value="#{date.default}"/>
+                </div>
+                <div class="form-group">
+                    <label th:text="#{deliveries.shift}">Delivery Shift</label>
+                    <select class="form-control" name="shift">
+                        <option th:each="shift : ${allShifts}"
+                                th:text="#{${'shift.' + shift}}"
+                                th:value="${shift}">
+                        </option>
+                    </select>
+                </div>
+                <input id="submit" class="btn btn-default" type="submit" th:value="#{ok}"/>
+            </form>
         </div>
     </div>
-</form>
+</div>
 <!--<script src="http://code.jquery.com/jquery-2.1.4.min.js"/>-->
 <!--<script src="/resources/scripts/app.js"/>-->
 </body>
