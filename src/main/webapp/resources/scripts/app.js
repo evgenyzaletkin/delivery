@@ -1,11 +1,11 @@
 $(document).ready(function() {
     var validate = function() {
-        var isValid = validateVolume() && validateShifts();
-        if (isValid) {
+        if (validateVolume()) {
             $('#submit').removeAttr('disabled');
         } else {
             $('#submit').attr('disabled','disabled');
         }
+        validateShifts();
     };
 
     var validateVolume = function() {
@@ -15,7 +15,7 @@ $(document).ready(function() {
             var cells = $(rows[i]).children();
             sum += parseFloat($(cells[3]).text());
         }
-        console.log(sum);
+        $("#total").text(sum);
         if (sum > 1400.0) {
             $ ("#errors").show();
             return false;
@@ -26,7 +26,23 @@ $(document).ready(function() {
     };
 
     var validateShifts = function() {
-        $ ("#warns").hide();
+        var shift = $('#shift').val();
+        var rows = $("#assigned").children();
+        var warnsPresented = false;
+        for (var i = 0; i < rows.length; i++) {
+            var row = $(rows[i]);
+            var cells = row.children();
+            var currentShift = $(cells[2]).text();
+            if (currentShift != "" && currentShift != shift) {
+                warnsPresented = true;
+                row.addClass("warning");
+            } else {
+                row.removeClass("warning");
+            }
+        }
+        var warns = $("#warns");
+        if (warnsPresented) warns.show();
+        else warns.hide();
         return true;
     };
 
@@ -53,6 +69,8 @@ $(document).ready(function() {
         }
         validate();
     });
+
+    validate();
 
 });
     

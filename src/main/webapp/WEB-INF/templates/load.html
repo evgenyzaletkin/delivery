@@ -23,7 +23,7 @@
 
                     <div>
                         <label th:text="#{deliveries.shift}">Shift</label>
-                        <input type="text" readonly="readonly" th:value="#{${'shift.' + load.shift}}"/>
+                        <input id="shift" type="text" readonly="readonly" th:value="#{${'shift.' + load.shift}}"/>
                         <input type="text" hidden="hidden" th:field="*{shift}"/>
                     </div>
                 </div>
@@ -40,6 +40,12 @@
             </div>
         </div>
         <!--<input id="submit" type="submit" value="ok"/>-->
+
+        <div class="row">
+            <div class="col-md-4 col-md-offset-8">
+                <p th:utext="#{loads.total}">...</p>
+            </div>
+        </div>
 
         <div class="row">
             <div class="col-md-6">
