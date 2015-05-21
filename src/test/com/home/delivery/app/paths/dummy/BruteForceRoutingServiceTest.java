@@ -3,6 +3,7 @@ package com.home.delivery.app.paths.dummy;
 import com.home.delivery.app.Delivery;
 import com.home.delivery.app.paths.DefaultRoutingService;
 import com.home.delivery.app.paths.GoogleMapsService;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 public class BruteForceRoutingServiceTest
 {
 
+    @Ignore
     @Test
     public void justTest() throws Exception {
         String rawText = "8347 JUDY DRIVE\tFAYETTEVILLE\tNC\t28314\n" +

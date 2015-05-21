@@ -45,5 +45,7 @@
         </property>
     </bean>
 
+    <bean class="com.home.delivery.security.AppSecurityConfig"/>
+
     <import resource="application-context.xml"/>
 </beans>

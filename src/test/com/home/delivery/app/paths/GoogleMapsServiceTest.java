@@ -1,6 +1,7 @@
 package com.home.delivery.app.paths;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -57,6 +58,7 @@ public class GoogleMapsServiceTest {
         Assert.assertTrue(distances.containsKey(new RouteElement("RAEFORD NC", "FAYETTEVILLE NC")));
     }
 
+    @Ignore
     @Test
     public void bigRequest() throws Exception {
         String rawText = "105 SILVER BERRY CT\tRAEFORD\tNC\t28376\n" +
