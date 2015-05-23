@@ -12,14 +12,14 @@ public class BruteForceTspSolver<T> implements TspSolver<T>
 {
 
     final T origin;
-    private final Collection<T> source;
+    private final Collection<T> waypoints;
     private final DistancesProvider<T> distancesProvider;
 
     private Tour<T> minTour;
 
-    public BruteForceTspSolver(T origin, Collection<T> source, DistancesProvider<T> distancesProvider) {
+    public BruteForceTspSolver(T origin, Collection<T> waypoints, DistancesProvider<T> distancesProvider) {
         this.origin = origin;
-        this.source = source;
+        this.waypoints = waypoints;
         this.distancesProvider = distancesProvider;
     }
 
@@ -32,7 +32,7 @@ public class BruteForceTspSolver<T> implements TspSolver<T>
 
     private void findMinTourRecursively(Tour<T> tour) {
         if (tour.distance < minTour.distance) {
-            List<T> unvisited = source.stream().filter(t -> !tour.points.contains(t)).collect(Collectors.toList());
+            List<T> unvisited = waypoints.stream().filter(t -> !tour.points.contains(t)).collect(Collectors.toList());
             T last = tour.getLast();
             if (unvisited.isEmpty()) {
                 Tour<T> newTour = tour.add(origin, distancesProvider.getDistance(last, origin));
@@ -45,7 +45,7 @@ public class BruteForceTspSolver<T> implements TspSolver<T>
 
     private Tour<T> findMinGreedy() {
         Tour<T> t = new Tour<T>(Collections.singletonList(origin), 0);
-        List<T> ps = new ArrayList<>(source);
+        List<T> ps = new ArrayList<>(waypoints);
         while (!ps.isEmpty()) {
             T last = t.getLast();
             int min = Integer.MAX_VALUE;

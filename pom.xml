@@ -191,7 +191,7 @@
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.8</source>
+          <waypoints>1.8</waypoints>
           <target>1.8</target>
         </configuration>
       </plugin>

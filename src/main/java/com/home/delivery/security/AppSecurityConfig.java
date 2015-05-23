@@ -1,5 +1,6 @@
 package com.home.delivery.security;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Configuration;
@@ -7,15 +8,10 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import javax.inject.Inject;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * Created by evgeny on 22.05.15.
@@ -27,6 +23,11 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
     static final String DISPATCHER_ROLE = "DISPATCHER";
     static final String DRIVER_ROLE = "DRIVER";
 
+    private static final ImmutableMap<String, String> ROLES_TO_PAGES = ImmutableMap.of(
+            "ROLE_" + DISPATCHER_ROLE, "/deliveries",
+            "ROLE_" + DRIVER_ROLE, "/driver"
+    );
+
     private static final Log log = LogFactory.getLog(AppSecurityConfig.class);
 
     @Inject
@@ -34,7 +35,6 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.inMemoryAuthentication().withUser("dispatcher").password("dispatcher").roles(DISPATCHER_ROLE);
         auth.inMemoryAuthentication().withUser("driver1").password("driver1").roles(DRIVER_ROLE);
         auth.inMemoryAuthentication().withUser("driver2").password("driver2").roles(DRIVER_ROLE);
-//        auth.inMemoryAuthentication().withUser("superadmin").password("superadmin").roles("SUPERADMIN");
     }
 
     @Override
@@ -51,18 +51,11 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private AuthenticationSuccessHandler successHandler()
     {
-        return new AuthenticationSuccessHandler()
-        {
-            @Override
-            public void onAuthenticationSuccess(HttpServletRequest httpServletRequest,
-                                                HttpServletResponse httpServletResponse,
-                                                Authentication authentication) throws IOException, ServletException {
-                for (GrantedAuthority authority : authentication.getAuthorities()) {
-                    if (("ROLE_" + DISPATCHER_ROLE).equals(authority.getAuthority())) {
-                        httpServletResponse.sendRedirect("/deliveries");
-                    } else if (("ROLE_" + DRIVER_ROLE).equals(authority.getAuthority())) {
-                        httpServletResponse.sendRedirect("/driver");
-                    }
+        return (httpServletRequest, httpServletResponse, authentication) -> {
+            for (GrantedAuthority authority : authentication.getAuthorities()) {
+                if (ROLES_TO_PAGES.containsKey(authority.getAuthority())) {
+                    httpServletResponse.sendRedirect(ROLES_TO_PAGES.get(authority.getAuthority()));
+                    return;
                 }
             }
         };
