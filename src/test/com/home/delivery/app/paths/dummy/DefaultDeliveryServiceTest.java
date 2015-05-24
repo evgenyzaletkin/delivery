@@ -13,13 +13,18 @@ import java.util.stream.Collectors;
 /**
  * Created by evgeny on 16.05.15.
  */
-public class BruteForceRoutingServiceTest
+public class DefaultDeliveryServiceTest
 {
 
     @Ignore
     @Test
-    public void justTest() throws Exception {
-        String rawText = "8347 JUDY DRIVE\tFAYETTEVILLE\tNC\t28314\n" +
+    public void bigTest() throws Exception {
+        String rawText = "120 QUAIL RD\tRAEFORD\tNC\t28376\n" +
+                "6041 GOLDEN RAIN DRIVE\tFAYETTEVILLE\tNC\t28314\n" +
+                "6041 GOLDEN RAIN DRIVE\tFAYETTEVILLE\tNC\t28314\n" +
+                "6016 CROWN RIDGE COURT\tFAYETTEVILLE\tNC\t28314\n" +
+                "9032 GROUSE RUN LANE\tFAYETTEVILLE\tNC\t28314\n" +
+                "8347 JUDY DRIVE\tFAYETTEVILLE\tNC\t28314\n" +
                 "1579 ROSSMERE DRIVE\tFAYETTEVILLE\tNC\t28314\n" +
                 "182 LOCHWOOD DRIVE\tRAEFORD\tNC\t28376\n" +
                 "107 DEERLODGE COURT\tRAEFORD\tNC\t28376\n" +
@@ -32,10 +37,29 @@ public class BruteForceRoutingServiceTest
                 "3429 GABLES DRIVE\tFAYETTEVILLE\tNC\t28311\n" +
                 "3000 COOLEE CIRCLE\tFAYETTEVILLE\tNC\t28311\n" +
                 "1040 WILD PINE DRIVE\tFAYETTEVILLE\tNC\t28312\n" +
-                "2730 CREEK MEADOW PL, APT 142\tFAYETTEVILLE\tNC\t28304\n" +
-                "6319 RAEFORD ROAD, APT 46\tFAYETTEVILLE\tNC\t28304\n" +
-                "3551 DORADO CIRCLE APT 106\tFAYETTEVILLE\tNC\t28304\n" +
-                "1057 GLEN REILLY DRIVE\tFAYETTEVILLE\tNC\t28314\n";
+                "5075 MORGANTON ROAD\tFAYETTEVILLE\tNC\t28314\n";
+        List<Delivery> deliveries = Arrays.stream(rawText.split("\n")).map(s -> {
+            String[] split = s.split("\t");
+            Delivery d = new Delivery();
+            d.setStreet(split[0]);
+            d.setCity(split[1]);
+            d.setState(split[2]);
+            d.setZip(Integer.valueOf(split[3]));
+            return d;
+        }).collect(Collectors.toList());
+
+        GoogleMapsService googleMapsService = new GoogleMapsService();
+        DefaultRoutingService routingService = new DefaultRoutingService(googleMapsService);
+        List<Delivery> deliveries1 = routingService.buildRoute(deliveries);
+        System.out.println(deliveries1);
+    }
+
+    @Test
+    public void smallTest() throws Exception {
+        String rawText = "8347 JUDY DRIVE\tFAYETTEVILLE\tNC\t28314\n" +
+                "1579 ROSSMERE DRIVE\tFAYETTEVILLE\tNC\t28314\n" +
+                "182 LOCHWOOD DRIVE\tRAEFORD\tNC\t28376\n" +
+                "107 DEERLODGE COURT\tRAEFORD\tNC\t28376\n";
         List<Delivery> deliveries = Arrays.stream(rawText.split("\n")).map(s -> {
             String[] split = s.split("\t");
             Delivery d = new Delivery();

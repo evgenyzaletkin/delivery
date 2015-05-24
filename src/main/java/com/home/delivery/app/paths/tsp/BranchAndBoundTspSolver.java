@@ -3,28 +3,120 @@ package com.home.delivery.app.paths.tsp;
 import com.home.delivery.app.paths.DistancesProvider;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class BranchAndBoundTspSolver<T> implements TspSolver<T> {
+public class BranchAndBoundTspSolver<T> extends AbstractTspSolver<T> {
 
-    private final T origin;
-    private final List<T> waypoints;
-    private final DistancesProvider<T> distancesProvider;
     final int[][] c;
 
     private static final Integer THRESHOLD = Integer.MAX_VALUE / 2;
 
     public BranchAndBoundTspSolver(T origin, List<T> waypoints, DistancesProvider<T> distancesProvider) {
-        this.origin = origin;
-        this.waypoints = waypoints;
-        this.distancesProvider = distancesProvider;
+        super(origin, waypoints, distancesProvider);
         c = makeMatrix();
     }
 
 
+
+
     @Override
     public Tour<T> findMinPath() {
-        int[][] initial = cloneArray(c);
-        return null;
+//        System.out.println(waypoints);
+//        System.out.println(origin);
+//        System.out.println(printArray(c));
+        minTour = findMinGreedy();
+        Node root = createRootNode();
+        processNode(root);
+        return minTour;
+    }
+
+
+
+    void processNode(Node node) {
+//        System.out.println(node);
+        if (node.size > 2) {
+            List<Element> keys = findKeysInMatrix(node.a);
+            PriorityQueue<Node> queue = new PriorityQueue<>((n1, n2) -> Integer.compare(n1.cost, n2.cost));
+            for (Element key : keys) {
+                queue.offer(leftNode(node, key));
+                if (!isCycle(node, key))
+                    queue.offer(rightNode(node, key));
+            }
+            while (!queue.isEmpty()) {
+                Node child = queue.poll();
+                if (!checkCost(child)) break;
+                processNode(child);
+            }
+        } else processSmallNode(node);
+    }
+
+    void processSmallNode(Node node) {
+        List<Element> possibleElements = new ArrayList<>();
+        for (int i = 0; i < node.a.length; i++)
+            for (int j = 0; j < node.a.length; j++)
+                if (node.a[i][j] < THRESHOLD) possibleElements.add(new Element(i, j));
+
+        for (int i = 0; i < possibleElements.size(); i++) {
+            for (int j = i + 1; j < possibleElements.size(); j++) {
+                List<Element> elements = getPathForNode(node);
+                elements.add(possibleElements.get(i));
+                elements.add(possibleElements.get(j));
+                List<Element> path = makePathFromElements(elements);
+                if (path != null) {
+                    Tour<T> newTour = convertPathToTour(path);
+                    if (newTour.distance < minTour.distance)
+                        minTour = newTour;
+                }
+            }
+        }
+    }
+
+    private Tour<T> convertPathToTour(List<Element> path) {
+        Integer distance = 0;
+        List<T> points = new ArrayList<>(path.size());
+        for (Element element : path) {
+            distance += c[element.i][element.j];
+            points.add(element.i == 0 ? origin : waypoints.get(element.i - 1));
+        }
+        points.add(origin);
+        return new Tour<>(points, distance);
+    }
+
+
+    List<Element> getPathForNode(Node n) {
+        List<Element> path = new ArrayList<>();
+        while (n != null) {
+            if (n.e != null) path.add(n.e);
+            n = n.parent;
+        }
+        return path;
+    }
+
+    List<Element> makePathFromElements(Collection<Element> elements) {
+        int target = 0;
+        List<Element> path = new ArrayList<>();
+        while (true) {
+            Element found = null;
+            for (Element e : elements)
+                if (e.i == target) found = e;
+            if (found == null) return null;
+            for (Element e : path) {
+                if (e.j == found.j) return null;
+            }
+            path.add(found);
+            if (path.size() == elements.size())
+                return found.j == 0 ? path : null;
+            target = found.j;
+        }
+    }
+
+
+    private String printArray(int[][] a) {
+        return Arrays.stream(a).map(Arrays::toString).map(s -> "{" + s + "}").collect(Collectors.joining(",\n"));
+    }
+
+    boolean checkCost(Node node) {
+        return node.cost < minTour.distance;
     }
 
     int[][] makeMatrix() {
@@ -72,9 +164,18 @@ public class BranchAndBoundTspSolver<T> implements TspSolver<T> {
                 }
             }
         }
-        return elementsByCosts.lastEntry().getValue();
+        return elementsByCosts.isEmpty() ? Collections.emptyList() : elementsByCosts.lastEntry().getValue();
     }
 
+    Node createRootNode() {
+        int[][] initial = cloneArray(c);
+        int cost = reduceAndGetCost(initial);
+        Node root = new Node();
+        root.a = initial;
+        root.cost = cost;
+        root.size = initial.length;
+        return root;
+    }
 
     /**
      * Left node for the current node will be created.
@@ -90,7 +191,9 @@ public class BranchAndBoundTspSolver<T> implements TspSolver<T> {
     Node leftNode(Node parent, Element e) {
         int[][] a = cloneArray(parent.a);
         a[e.i][e.j] = Integer.MAX_VALUE;
-        return createNode(a, parent.cost);
+        Node left = createNode(a, parent);
+        left.size = parent.size;
+        return left;
     }
 
     /**
@@ -110,16 +213,56 @@ public class BranchAndBoundTspSolver<T> implements TspSolver<T> {
             a[e.i][i] = Integer.MAX_VALUE;
             a[i][e.j] = Integer.MAX_VALUE;
         }
-        Node right = createNode(a, parent.cost);
+        a[e.j][e.i] = Integer.MAX_VALUE;
+        forbidPreviousElements(parent, e, a);
+        Node right = createNode(a, parent);
         right.e = e;
+        right.size = parent.size - 1;
         return right;
     }
 
-    Node createNode(int[][] a, int currentCost) {
-        int newCost = reduceAndGetCost(a) + currentCost;
+    boolean isCycle(Node node, Element e) {
+        int target = e.j;
+        boolean keep = true;
+        List<Element> pathForNode = getPathForNode(node);
+        while (keep) {
+            keep = false;
+            for (Element pathElement : pathForNode) {
+                if (pathElement.i == target) {
+                    if (pathElement.j == e.i)
+                        return true;
+                    target = pathElement.j;
+                    keep = true;
+                    break;
+                }
+            }
+        }
+        return false;
+    }
+
+    void forbidPreviousElements (Node node, Element curElement, int[][] a) {
+        int target = curElement.i;
+        List<Element> pathForNode = getPathForNode(node);
+        boolean chainFound = true;
+        while (chainFound) {
+            chainFound = false;
+            for (Element pathElement : pathForNode) {
+                if (pathElement.j == target) {
+                    chainFound = true;
+                    a[curElement.j][pathElement.i] = Integer.MAX_VALUE;
+                    target = pathElement.i;
+                    break;
+                }
+            }
+        }
+    }
+
+    Node createNode(int[][] a, Node parent) {
+        int newCost = reduceAndGetCost(a) + parent.cost;
         Node newNode = new Node();
         newNode.a = a;
         newNode.cost = newCost;
+        newNode.parent = parent;
         return newNode;
     }
 
@@ -198,6 +341,18 @@ public class BranchAndBoundTspSolver<T> implements TspSolver<T> {
         List<Node> children;
         int cost;
         Element e;
+        int size;
+        Node parent;
+
+        @Override
+        public String toString() {
+            return "Node{" +
+                    "size=" + size +
+                    ", cost=" + cost +
+                    ", e=" + e +
+                    ",a=" + printArray(a) +
+                    '}';
+        }
     }
 
     class Element {
@@ -221,6 +376,14 @@ public class BranchAndBoundTspSolver<T> implements TspSolver<T> {
         @Override
         public int hashCode() {
             return Objects.hash(i, j);
+        }
+
+        @Override
+        public String toString() {
+            return "Element{" +
+                    "i=" + i +
+                    ", j=" + j +
+                    '}';
         }
     }
 

@@ -27,9 +27,6 @@ public class LoadsService {
         this.routingService = routingService;
     }
 
-    public List<Load> findAll() {
-        return Collections.emptyList();
-    }
 
     public Load getLoad(LocalDate date, DeliveryShift shift) {
         LoadKey key = new LoadKey(date, shift);
@@ -42,10 +39,13 @@ public class LoadsService {
     }
 
     public void updateLoad(Load load) {
+        load.setIsRouted(false);
         loads.put(new LoadKey(load.getDate(), load.getShift()), load);
         executorService.submit(() -> {
             List<Delivery> deliveries = load.getDeliveries();
             List<Delivery> sorted = routingService.buildRoute(deliveries);
+            load.setDeliveries(sorted);
+            load.setIsRouted(true);
         });
     }
 

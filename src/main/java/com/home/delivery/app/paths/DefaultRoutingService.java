@@ -1,7 +1,8 @@
 package com.home.delivery.app.paths;
 
+import com.google.common.collect.Lists;
 import com.home.delivery.app.Delivery;
-import com.home.delivery.app.paths.tsp.BruteForceTspSolver;
+import com.home.delivery.app.paths.tsp.BranchAndBoundTspSolver;
 import com.home.delivery.app.paths.tsp.Tour;
 import com.home.delivery.app.paths.tsp.TspSolver;
 import org.apache.commons.logging.Log;
@@ -36,10 +37,15 @@ public class DefaultRoutingService implements RoutingService
         Map<String, List<Delivery>> groupedByAddress = deliveries.stream().collect(Collectors.groupingBy(this::mapToAddress));
         List<String> waypoints = new ArrayList<>(groupedByAddress.keySet());
         waypoints.add(ORIGIN_ADDRESS);
+        long l = System.currentTimeMillis();
         Map<RouteElement, Integer> distances = googleMapsService.getDistances(waypoints, waypoints);
+        log.info("Time to get distances " + (System.currentTimeMillis() - l));
+        l = System.currentTimeMillis();
         DistancesProvider<String> distancesProvider = new SimpleDistanceProvider(distances);
-        TspSolver<String> tspSolver = new BruteForceTspSolver<>(ORIGIN_ADDRESS, groupedByAddress.keySet(), distancesProvider);
+        TspSolver<String> tspSolver = new BranchAndBoundTspSolver<>(ORIGIN_ADDRESS,
+                Lists.newArrayList(groupedByAddress.keySet()), distancesProvider);
         Tour<String> optimal = tspSolver.findMinPath();
+        log.info("Time to get path " + (System.currentTimeMillis() - l));
         log.info(String.format("The found tour is %s", optimal));
         return optimal.getPath().stream().
                 filter(s -> !s.equals(ORIGIN_ADDRESS)).
