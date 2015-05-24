@@ -1,6 +1,6 @@
 package com.home.delivery.app.paths.tsp;
 
-import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 import com.home.delivery.app.paths.DistancesProvider;
 import com.home.delivery.app.paths.RouteElement;
 import com.home.delivery.app.paths.SimpleDistanceProvider;
@@ -8,10 +8,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class BranchAndBoundTspSolverTest {
 
@@ -80,7 +79,7 @@ public class BranchAndBoundTspSolverTest {
 
     @Test
     public void reductionByRowsShouldReturnArrayWithTheSmallestElementsInEachRow() throws Exception {
-        int[][] c = Preconditions.checkNotNull(solver.c);
+        int[][] c = checkNotNull(solver.c);
         int[] reductionByRows = solver.getReductionByRows(c);
         Assert.assertArrayEquals(new int[]{0, 1, 1, 0}, reductionByRows);
 
@@ -88,8 +87,109 @@ public class BranchAndBoundTspSolverTest {
 
     @Test
     public void reductionByColumnsShouldReturnArrayWithTheSmallestElementInEachColumn() throws Exception {
-        int[][] c = Preconditions.checkNotNull(solver.c);
+        int[][] c = checkNotNull(solver.c);
         int[] reductionByColumns = solver.getReductionByColumns(c);
         Assert.assertArrayEquals(new int[]{2, 0, 0, 2}, reductionByColumns);
     }
+
+    @Test
+    public void cloneShouldReturnArrayWithTheSameElements() throws Exception {
+        int[][] c = checkNotNull(solver.c);
+        int[][] b = solver.cloneArray(c);
+        Assert.assertNotEquals(c ,b);
+        Assert.assertTrue(Arrays.deepEquals(c, b));
+    }
+
+
+    @Test
+    public void reduceRowsShouldSubtractElementTheSameElementFromEachRow() throws Exception {
+        int[][] c = checkNotNull(solver.c);
+        int[] reductionByRows = solver.getReductionByRows(c);
+        int[][] a = solver.cloneArray(c);
+        int sum = solver.reduceRows(a, reductionByRows);
+        Assert.assertEquals(2, sum);
+        for (int i = 0; i < a.length; i++) {
+            for (int j = 0; j < a.length; j++)
+                Assert.assertEquals(c[i][j] - a[i][j], reductionByRows[i]);
+        }
+
+    }
+
+    @Test
+    public void reduceRowsShouldSubtractElementTheSameElementFromEachColumn() throws Exception {
+        int[][] c = checkNotNull(solver.c);
+        int[] reductionByColumns = solver.getReductionByColumns(c);
+        int[][] a = solver.cloneArray(c);
+        int sum = solver.reduceColumns(a, reductionByColumns);
+        Assert.assertEquals(4, sum);
+        for (int j = 0; j < a.length; j++) {
+            for (int i = 0; i < a.length; i++)
+                Assert.assertEquals(c[i][j] - a[i][j], reductionByColumns[j]);
+        }
+
+    }
+
+    @Test
+    public void fullReduction() throws Exception {
+        int[][] expected = new int[][]{
+                {Integer.MAX_VALUE, 5, 0, 0},
+                {2, Integer.MAX_VALUE, 0, 3},
+                {5, 0, Integer.MAX_VALUE, 6},
+                {0, 0, 9, Integer.MAX_VALUE}
+        };
+        int[][] a = solver.cloneArray(checkNotNull(solver.c));
+        int cost = solver.reduceAndGetCost(a);
+        Assert.assertEquals(6, cost);
+//        Assert.assertTrue(Arrays.deepEquals(expected, a));
+
+    }
+
+    @Test
+    public void rootNodeCreation() throws Exception {
+        int[][] clone = solver.cloneArray(solver.c);
+        BranchAndBoundTspSolver<String>.Node root = solver.createNode(clone, 0);
+        Assert.assertEquals(6, root.cost);
+    }
+
+    @Test
+    public void leftNodeCreation() throws Exception {
+        int[][] clone = solver.cloneArray(solver.c);
+        BranchAndBoundTspSolver<String>.Node root = solver.createNode(clone, 0);
+        BranchAndBoundTspSolver.Element e = solver.new Element(2, 1);
+
+        BranchAndBoundTspSolver<String>.Node left = solver.leftNode(root, e);
+        Assert.assertEquals(left.a[e.i][e.j], Integer.MAX_VALUE - 5);
+        Assert.assertEquals(left.cost, root.cost + 5);
+    }
+
+    @Test
+    public void rightNodeCreation() throws Exception {
+        int[][] clone = solver.cloneArray(solver.c);
+        BranchAndBoundTspSolver<String>.Node root = solver.createNode(clone, 0);
+        BranchAndBoundTspSolver.Element e = solver.new Element(2, 1);
+
+        BranchAndBoundTspSolver<String>.Node right = solver.rightNode(root, e);
+        for (int i = 0; i < clone.length; i++) {
+            Assert.assertEquals(Integer.MAX_VALUE, right.a[2][i]);
+            Assert.assertEquals(Integer.MAX_VALUE, right.a[i][1]);
+        }
+        Assert.assertEquals(root.cost, right.cost);
+    }
+
+    @Test
+    public void findKeysInMatrix() {
+        int[][] redused = new int[][]{
+                {Integer.MAX_VALUE, 5, 0, 0},
+                {2, Integer.MAX_VALUE, 0, 3},
+                {5, 0, Integer.MAX_VALUE, 6},
+                {0, 0, 9, Integer.MAX_VALUE}
+        };
+        List<BranchAndBoundTspSolver.Element> expected = Collections.singletonList(solver.new Element(2, 1));
+        List<BranchAndBoundTspSolver<String>.Element> actual = solver.findKeysInMatrix(redused);
+        Assert.assertTrue(Iterables.elementsEqual(expected, actual));
+
+    }
+
+
+
 }
