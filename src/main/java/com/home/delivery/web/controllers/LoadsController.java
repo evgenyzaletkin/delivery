@@ -56,7 +56,8 @@ public class LoadsController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String updateLoad(Load load,
-                             @RequestParam(value = "delivery", defaultValue = "") List<String> deliveriesId) {
+                             @RequestParam(value = "delivery", defaultValue = "") List<String> deliveriesId,
+                             @RequestParam(value = "items", defaultValue = "") List<Integer> items) {
         Load oldLoad = loadsService.getLoad(load.getDate(), load.getShift());
         oldLoad.getDeliveries().forEach(d -> d.setLoad(null));
         List<Delivery> deliveries = deliveriesId.stream().
