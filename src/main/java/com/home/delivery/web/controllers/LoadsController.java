@@ -41,11 +41,14 @@ public class LoadsController {
     @RequestMapping(method = RequestMethod.GET, params = {"date", "shift"})
     public String showLoad(@RequestParam("date")LocalDate date, @RequestParam("shift") DeliveryShift shift, Model model) {
         Load load = loadsService.getLoad(date, shift);
+        if (load == null) load = loadsService.createNewLoad(date, shift);
         model.addAttribute("load", load);
+        List<Delivery> deliveriesForLoad = load.getDeliveries();
         List<Delivery> freeDeliveries = deliveriesService.getAllDeliveries().
                 stream().
                 filter(d -> date.isEqual(d.getDeliveryDate())).
                 filter(d -> d.getLoad() == null).
+                filter(d -> !deliveriesForLoad.contains(d)).
                 collect(Collectors.toList());
         model.addAttribute("deliveries", freeDeliveries);
         return "load";

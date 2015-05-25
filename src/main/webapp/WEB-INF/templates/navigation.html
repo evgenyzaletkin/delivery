@@ -30,6 +30,28 @@
                     <li><a th:href="@{/deliveries}" th:text="#{deliveries.title}">Deliveries</a></li>
                     <li><a th:href="@{/loads}" th:text="#{dispatcher.loads}">Manage loads</a></li>
                     <li><a th:href="@{/upload}" th:text="#{dispatcher.upload}">Upload new CSV</a></li>
+                    <li><a th:href="@{/logout}" th:text="#{logout}">Logout</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+</div>
+
+<div th:fragment="driver_nav_bar">
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <p class="navbar-brand" th:text="#{project.title}">Larkin LLC</p>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a th:href="@{/logout}" th:text="#{logout}">Logout</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
         </div>

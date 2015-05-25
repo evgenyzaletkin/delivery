@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * Created by evgeny on 08.05.15.
  */
-@ThreadSafe
 public final class Load {
     private Tour<String> tour;
     private DeliveryShift shift;

@@ -41,8 +41,9 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().
                 authorizeRequests().
-                antMatchers("/**").access("hasRole('ROLE_DISPATCHER')").
+                antMatchers("/resources/**").access("hasAnyRole('ROLE_DRIVER, ROLE_DISPATCHER')").
                 antMatchers("/driver/**").access("hasRole('ROLE_DRIVER')").
+                antMatchers("/**").access("hasRole('ROLE_DISPATCHER')").
                 and().
                 formLogin().
                 successHandler(successHandler()).

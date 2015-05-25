@@ -1,0 +1,72 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <meta charset="UTF-8"/>
+    <title th:text="#{deliveries.title}">Deliveries</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/resources/css/common.css"/>
+</head>
+<body>
+
+<div th:include="navigation::driver_nav_bar"></div>
+
+
+<div class="container">
+
+
+    <div th:each="entry: ${loadsAndShifts.entrySet()}">
+        <div class="row" th:with="shift = ${entry.key}">
+            <div class="col-md-8">
+                <div class="form-inline">
+
+                    <div>
+                        <label th:text="#{deliveries.shift}">Shift</label>
+                        <p th:text="#{${'shift.' + shift}}">Shift</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row" th:with="load = ${entry.value}">
+            <div class="col-md-12" th:if="${load != null}">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                    <th th:text="#{deliveries.number}">Order</th>
+                    <th th:text="#{deliveries.state}">State</th>
+                    <th th:text="#{deliveries.city}">City</th>
+                    <th th:text="#{deliveries.zip}">Zip</th>
+                    <th th:text="#{deliveries.address}">Address</th>
+                    <th th:text="#{deliveries.date}">Date</th>
+                    <th th:text="#{deliveries.client}">Client Name</th>
+                    <th th:text="#{deliveries.phone}">Phone Number</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="d, iterStat: ${load.deliveries}">
+                        <td th:text="${iterStat.count}">NC</td>
+                        <td th:text="${d.state}">NC</td>
+                        <td th:text="${d.city}">NY</td>
+                        <td th:text="${d.zip}">02673</td>
+                        <td th:text="${d.street}">blah</td>
+                        <td th:text="${d.deliveryDate}">date</td>
+                        <td th:text="${d.clientName}">client</td>
+                        <td th:text="${d.phoneNumber}">777-7-777</td>
+                    </tr>
+                    </tbody>
+
+                </table>
+            </div>
+            <div class="col-md-8" th:if="${load == null}">
+                <div class="warn">
+                    <p th:text="#{driver.load}">Load is not constructed</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
