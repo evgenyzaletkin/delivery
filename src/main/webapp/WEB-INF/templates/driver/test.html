@@ -1,0 +1,356 @@
+<body>
+
+<div>
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <p class="navbar-brand">Larkin LLC</p>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a shape="rect" href="/deliveries">Deliveries</a></li>
+                    <li><a shape="rect" href="/loads">Manage Loads</a></li>
+                    <li><a shape="rect" href="/upload">Upload new CSV</a></li>
+                    <li><a shape="rect" href="/logout">Logout</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+</div>
+<div class="container">
+
+    <form action="/loads" method="post" enctype="application/x-www-form-urlencoded">
+        <div class="row" hidden="hidden">
+            <div class="col-md-6">
+                <div class="form-inline">
+                    <div>
+                        <label>Delivery Date</label>
+                        <input type="text" readonly="readonly" value="2014-09-15" id="date" name="date" />
+                    </div>
+
+                    <div>
+                        <label>Delivery Shift</label>
+                        <input id="shift" type="text" readonly="readonly" value="Evening" />
+                        <input type="text" hidden="hidden" id="shift" name="shift" value="EVENING" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="panel panel-default col-md-12">
+                <div class="panel-heading">Deliveries included in the current load</div>
+                <div class="panel-body">
+                    <p>Use checkboxes to select deliveries and up key to include them into the current delivery. Use down key to exclude them. After creating the load click submit. The load will be stored and the path containing all the points will be calculated asynchronously.</p>
+                </div>
+                <div>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <td rowspan="1" colspan="1"></td>
+                            <td rowspan="1" colspan="1">Order Number</td>
+                            <td rowspan="1" colspan="1">Delivery Shift</td>
+                            <td rowspan="1" colspan="1">Volume</td>
+                            <td rowspan="1" colspan="1">Destination City</td>
+                            <td rowspan="1" colspan="1">Destination Address</td>
+                            <td rowspan="1" colspan="1">ZIP</td>
+                            <td rowspan="1" colspan="1">Available Parts</td>
+                            <td rowspan="1" colspan="1">Parts</td>
+                        </tr>
+                        </thead>
+
+                        <tbody id="assigned">
+                        <tr class="500398880">
+                            <td rowspan="1" colspan="1"><input type="checkbox" /></td>
+                            <td rowspan="1" colspan="1"><input type="text" readonly="readonly" name="delivery" value="500398880" /> </td>
+                            <td rowspan="1" colspan="1"></td>
+                            <td class="total" rowspan="1" colspan="1">53.97</td>
+                            <td hidden="hidden" class="single" rowspan="1" colspan="1">17.99</td>
+                            <td rowspan="1" colspan="1">SPRING LAKE</td>
+                            <td rowspan="1" colspan="1">100  C PINECREST CIR</td>
+                            <td rowspan="1" colspan="1">28390</td>
+                            <td class="allitems" rowspan="1" colspan="1">3</td>
+                            <td class="items" rowspan="1" colspan="1"><input type="number" name="items" value="3" /></td>
+                        </tr>
+                        <tr class="500394835">
+                            <td rowspan="1" colspan="1"><input type="checkbox" /></td>
+                            <td rowspan="1" colspan="1"><input type="text" readonly="readonly" name="delivery" value="500394835" /> </td>
+                            <td rowspan="1" colspan="1"></td>
+                            <td class="total" rowspan="1" colspan="1">33.0</td>
+                            <td hidden="hidden" class="single" rowspan="1" colspan="1">33.0</td>
+                            <td rowspan="1" colspan="1">FAYETTEVILLE</td>
+                            <td rowspan="1" colspan="1">6041 GOLDEN RAIN DRIVE</td>
+                            <td rowspan="1" colspan="1">28314</td>
+                            <td class="allitems" rowspan="1" colspan="1">1</td>
+                            <td class="items" rowspan="1" colspan="1"><input type="number" name="items" value="1" /></td>
+                        </tr>
+                        <tr class="500397285">
+                            <td rowspan="1" colspan="1"><input type="checkbox" /></td>
+                            <td rowspan="1" colspan="1"><input type="text" readonly="readonly" name="delivery" value="500397285" /> </td>
+                            <td rowspan="1" colspan="1"></td>
+                            <td class="total" rowspan="1" colspan="1">19.5</td>
+                            <td hidden="hidden" class="single" rowspan="1" colspan="1">4.875</td>
+                            <td rowspan="1" colspan="1">FAYETTEVILLE</td>
+                            <td rowspan="1" colspan="1">8347 JUDY DRIVE</td>
+                            <td rowspan="1" colspan="1">28314</td>
+                            <td class="allitems" rowspan="1" colspan="1">4</td>
+                            <td class="items" rowspan="1" colspan="1"><input type="number" name="items" value="4" /></td>
+                        </tr>
+                        <tr class="500402570">
+                            <td rowspan="1" colspan="1"><input type="checkbox" /></td>
+                            <td rowspan="1" colspan="1"><input type="text" readonly="readonly" name="delivery" value="500402570" /> </td>
+                            <td rowspan="1" colspan="1"></td>
+                            <td class="total" rowspan="1" colspan="1">45.0</td>
+                            <td hidden="hidden" class="single" rowspan="1" colspan="1">15.0</td>
+                            <td rowspan="1" colspan="1">SPRING LAKE</td>
+                            <td rowspan="1" colspan="1">320 ORCHARD FALLS DR</td>
+                            <td rowspan="1" colspan="1">28390</td>
+                            <td class="allitems" rowspan="1" colspan="1">3</td>
+                            <td class="items" rowspan="1" colspan="1"><input type="number" name="items" value="3" /></td>
+                        </tr>
+                        <tr class="500393645">
+                            <td rowspan="1" colspan="1"><input type="checkbox" /></td>
+                            <td rowspan="1" colspan="1"><input type="text" readonly="readonly" name="delivery" value="500393645" /> </td>
+                            <td rowspan="1" colspan="1"></td>
+                            <td class="total" rowspan="1" colspan="1">15.53</td>
+                            <td hidden="hidden" class="single" rowspan="1" colspan="1">15.53</td>
+                            <td rowspan="1" colspan="1">FAYETTEVILLE</td>
+                            <td rowspan="1" colspan="1">1057 GLEN REILLY DRIVE</td>
+                            <td rowspan="1" colspan="1">28314</td>
+                            <td class="allitems" rowspan="1" colspan="1">1</td>
+                            <td class="items" rowspan="1" colspan="1"><input type="number" name="items" value="1" /></td>
+                        </tr>
+                        <tr class="500393940">
+                            <td rowspan="1" colspan="1"><input type="checkbox" /></td>
+                            <td rowspan="1" colspan="1"><input type="text" readonly="readonly" name="delivery" value="500393940" /> </td>
+                            <td rowspan="1" colspan="1"></td>
+                            <td class="total" rowspan="1" colspan="1">35.94</td>
+                            <td hidden="hidden" class="single" rowspan="1" colspan="1">17.97</td>
+                            <td rowspan="1" colspan="1">FAYETTEVILLE</td>
+                            <td rowspan="1" colspan="1">3551 DORADO CIRCLE APT 106</td>
+                            <td rowspan="1" colspan="1">28304</td>
+                            <td class="allitems" rowspan="1" colspan="1">2</td>
+                            <td class="items" rowspan="1" colspan="1"><input type="number" name="items" value="2" /></td>
+                        </tr>
+                        <tr class="500390005">
+                            <td rowspan="1" colspan="1"><input type="checkbox" /></td>
+                            <td rowspan="1" colspan="1"><input type="text" readonly="readonly" name="delivery" value="500390005" /> </td>
+                            <td rowspan="1" colspan="1"></td>
+                            <td class="total" rowspan="1" colspan="1">27.2</td>
+                            <td hidden="hidden" class="single" rowspan="1" colspan="1">3.4</td>
+                            <td rowspan="1" colspan="1">FAYETTEVILLE</td>
+                            <td rowspan="1" colspan="1">201 WATERDOWN DRIVE APT 8</td>
+                            <td rowspan="1" colspan="1">28314</td>
+                            <td class="allitems" rowspan="1" colspan="1">8</td>
+                            <td class="items" rowspan="1" colspan="1"><input type="number" name="items" value="8" /></td>
+                        </tr>
+                        <tr class="500401660">
+                            <td rowspan="1" colspan="1"><input type="checkbox" /></td>
+                            <td rowspan="1" colspan="1"><input type="text" readonly="readonly" name="delivery" value="500401660" /> </td>
+                            <td rowspan="1" colspan="1"></td>
+                            <td class="total" rowspan="1" colspan="1">45.66</td>
+                            <td hidden="hidden" class="single" rowspan="1" colspan="1">15.22</td>
+                            <td rowspan="1" colspan="1">FAYETTEVILLE</td>
+                            <td rowspan="1" colspan="1">5075 MORGANTON RD</td>
+                            <td rowspan="1" colspan="1">28314</td>
+                            <td class="allitems" rowspan="1" colspan="1">3</td>
+                            <td class="items" rowspan="1" colspan="1"><input type="number" name="items" value="3" /></td>
+                        </tr>
+                        <tr class="500400725">
+                            <td rowspan="1" colspan="1"><input type="checkbox" /></td>
+                            <td rowspan="1" colspan="1"><input type="text" readonly="readonly" name="delivery" value="500400725" /> </td>
+                            <td rowspan="1" colspan="1"></td>
+                            <td class="total" rowspan="1" colspan="1">64.4</td>
+                            <td hidden="hidden" class="single" rowspan="1" colspan="1">16.1</td>
+                            <td rowspan="1" colspan="1">FAYETTEVILLE</td>
+                            <td rowspan="1" colspan="1">1579 ROSSMERE DRIVE</td>
+                            <td rowspan="1" colspan="1">28314</td>
+                            <td class="allitems" rowspan="1" colspan="1">4</td>
+                            <td class="items" rowspan="1" colspan="1"><input type="number" name="items" value="4" /></td>
+                        </tr>
+                        <tr class="500392015">
+                            <td rowspan="1" colspan="1"><input type="checkbox" /></td>
+                            <td rowspan="1" colspan="1"><input type="text" readonly="readonly" name="delivery" value="500392015" /> </td>
+                            <td rowspan="1" colspan="1">Evening</td>
+                            <td class="total" rowspan="1" colspan="1">87.82</td>
+                            <td hidden="hidden" class="single" rowspan="1" colspan="1">14.636666</td>
+                            <td rowspan="1" colspan="1">CARTHAGE</td>
+                            <td rowspan="1" colspan="1">338 DICKS HILL ROAD</td>
+                            <td rowspan="1" colspan="1">28327</td>
+                            <td class="allitems" rowspan="1" colspan="1">6</td>
+                            <td class="items" rowspan="1" colspan="1"><input type="number" name="items" value="6" /></td>
+                        </tr>
+                        <tr class="500401170">
+                            <td rowspan="1" colspan="1"><input type="checkbox" /></td>
+                            <td rowspan="1" colspan="1"><input type="text" readonly="readonly" name="delivery" value="500401170" /> </td>
+                            <td rowspan="1" colspan="1"></td>
+                            <td class="total" rowspan="1" colspan="1">34.65</td>
+                            <td hidden="hidden" class="single" rowspan="1" colspan="1">17.325</td>
+                            <td rowspan="1" colspan="1">FAYETTEVILLE</td>
+                            <td rowspan="1" colspan="1">6041 GOLDEN RAIN DRIVE</td>
+                            <td rowspan="1" colspan="1">28314</td>
+                            <td class="allitems" rowspan="1" colspan="1">2</td>
+                            <td class="items" rowspan="1" colspan="1"><input type="number" name="items" value="2" /></td>
+                        </tr>
+                        <tr class="500397080">
+                            <td rowspan="1" colspan="1"><input type="checkbox" /></td>
+                            <td rowspan="1" colspan="1"><input type="text" readonly="readonly" name="delivery" value="500397080" /> </td>
+                            <td rowspan="1" colspan="1"></td>
+                            <td class="total" rowspan="1" colspan="1">15.53</td>
+                            <td hidden="hidden" class="single" rowspan="1" colspan="1">15.53</td>
+                            <td rowspan="1" colspan="1">SANFORD</td>
+                            <td rowspan="1" colspan="1">67 WHITE OAK CIR</td>
+                            <td rowspan="1" colspan="1">27332</td>
+                            <td class="allitems" rowspan="1" colspan="1">1</td>
+                            <td class="items" rowspan="1" colspan="1"><input type="number" name="items" value="1" /></td>
+                        </tr>
+                        <tr class="500376825">
+                            <td rowspan="1" colspan="1"><input type="checkbox" /></td>
+                            <td rowspan="1" colspan="1"><input type="text" readonly="readonly" name="delivery" value="500376825" /> </td>
+                            <td rowspan="1" colspan="1"></td>
+                            <td class="total" rowspan="1" colspan="1">14.76</td>
+                            <td hidden="hidden" class="single" rowspan="1" colspan="1">3.69</td>
+                            <td rowspan="1" colspan="1">FAYETTEVILLE</td>
+                            <td rowspan="1" colspan="1">6016 CROWN RIDGE COURT</td>
+                            <td rowspan="1" colspan="1">28314</td>
+                            <td class="allitems" rowspan="1" colspan="1">4</td>
+                            <td class="items" rowspan="1" colspan="1"><input type="number" name="items" value="4" /></td>
+                        </tr>
+                        <tr class="500402270">
+                            <td rowspan="1" colspan="1"><input type="checkbox" /></td>
+                            <td rowspan="1" colspan="1"><input type="text" readonly="readonly" name="delivery" value="500402270" /> </td>
+                            <td rowspan="1" colspan="1"></td>
+                            <td class="total" rowspan="1" colspan="1">31.96</td>
+                            <td hidden="hidden" class="single" rowspan="1" colspan="1">31.96</td>
+                            <td rowspan="1" colspan="1">FAYETTEVILLE</td>
+                            <td rowspan="1" colspan="1">627 GARFIELD DRIVE</td>
+                            <td rowspan="1" colspan="1">28303</td>
+                            <td class="allitems" rowspan="1" colspan="1">1</td>
+                            <td class="items" rowspan="1" colspan="1"><input type="number" name="items" value="1" /></td>
+                        </tr>
+                        <tr class="500397355">
+                            <td rowspan="1" colspan="1"><input type="checkbox" /></td>
+                            <td rowspan="1" colspan="1"><input type="text" readonly="readonly" name="delivery" value="500397355" /> </td>
+                            <td rowspan="1" colspan="1"></td>
+                            <td class="total" rowspan="1" colspan="1">22.94</td>
+                            <td hidden="hidden" class="single" rowspan="1" colspan="1">5.735</td>
+                            <td rowspan="1" colspan="1">FORT BRAGG</td>
+                            <td rowspan="1" colspan="1">716 HERMAN PLACE</td>
+                            <td rowspan="1" colspan="1">28307</td>
+                            <td class="allitems" rowspan="1" colspan="1">4</td>
+                            <td class="items" rowspan="1" colspan="1"><input type="number" name="items" value="4" /></td>
+                        </tr>
+                        <tr class="500394170">
+                            <td rowspan="1" colspan="1"><input type="checkbox" /></td>
+                            <td rowspan="1" colspan="1"><input type="text" readonly="readonly" name="delivery" value="500394170" /> </td>
+                            <td rowspan="1" colspan="1"></td>
+                            <td class="total" rowspan="1" colspan="1">8.2</td>
+                            <td hidden="hidden" class="single" rowspan="1" colspan="1">8.2</td>
+                            <td rowspan="1" colspan="1">CAMERON</td>
+                            <td rowspan="1" colspan="1">21 MAYFLOWER COURT</td>
+                            <td rowspan="1" colspan="1">28326</td>
+                            <td class="allitems" rowspan="1" colspan="1">1</td>
+                            <td class="items" rowspan="1" colspan="1"><input type="number" name="items" value="1" /></td>
+                        </tr>
+                        <tr class="500384925">
+                            <td rowspan="1" colspan="1"><input type="checkbox" /></td>
+                            <td rowspan="1" colspan="1"><input type="text" readonly="readonly" name="delivery" value="500384925" /> </td>
+                            <td rowspan="1" colspan="1"></td>
+                            <td class="total" rowspan="1" colspan="1">32.5</td>
+                            <td hidden="hidden" class="single" rowspan="1" colspan="1">16.25</td>
+                            <td rowspan="1" colspan="1">FAYETTEVILLE</td>
+                            <td rowspan="1" colspan="1">1040 WILD PINE DRIVE</td>
+                            <td rowspan="1" colspan="1">28312</td>
+                            <td class="allitems" rowspan="1" colspan="1">2</td>
+                            <td class="items" rowspan="1" colspan="1"><input type="number" name="items" value="2" /></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--<input id="submit" type="submit" value="ok"/>-->
+
+        <div class="row">
+            <div class="col-md-4 col-md-offset-8">
+                <p>Total Volume: <span id='total'>0</span>lbs/1400lbs</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <button id="submit" class="btn btn-default" value="ok" type="submit">Submit Load</button>
+            </div>
+            <div class="col-md-6">
+                <div class="btn-group">
+                    <div id="up" class="glyphicon glyphicon-arrow-up btn btn-default"></div>
+                    <div id="down" class="glyphicon glyphicon-arrow-down btn btn-default"></div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div id="errors" class="alert alert-danger" hidden="hidden">
+                <p>The maximum volume is exceeded</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div id="warns" class="alert alert-warning" hidden="hidden">
+                <p>Some deliveries are wanted to be delivered at the different time</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="panel panel-default col-md-12">
+            <div class="panel-heading">Deliveries for the current day but not included into any load</div>
+            <div>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <td rowspan="1" colspan="1"></td>
+                        <td rowspan="1" colspan="1">Order Number</td>
+                        <td rowspan="1" colspan="1">Delivery Shift</td>
+                        <td rowspan="1" colspan="1">Volume</td>
+                        <td rowspan="1" colspan="1">Destination City</td>
+                        <td rowspan="1" colspan="1">Destination Address</td>
+                        <td rowspan="1" colspan="1">ZIP</td>
+                        <td rowspan="1" colspan="1">Available Parts</td>
+                        <td rowspan="1" colspan="1">Parts</td>
+                    </tr>
+                    </thead>
+
+                    <tbody id="unassigned">
+                        <tr class="500384925">
+                            <td rowspan="1" colspan="1"><input type="checkbox" /></td>
+                            <td rowspan="1" colspan="1"><input type="text" readonly="readonly" name="delivery" value="500384925" /> </td>
+                            <td rowspan="1" colspan="1"></td>
+                            <td class="total" rowspan="1" colspan="1">32.5</td>
+                            <td hidden="hidden" class="single" rowspan="1" colspan="1">16.25</td>
+                            <td rowspan="1" colspan="1">FAYETTEVILLE</td>
+                            <td rowspan="1" colspan="1">1040 WILD PINE DRIVE</td>
+                            <td rowspan="1" colspan="1">28312</td>
+                            <td class="allitems" rowspan="1" colspan="1">2</td>
+                            <td class="items" rowspan="1" colspan="1"><input type="number" name="items" value="2" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="http://code.jquery.com/jquery-2.1.4.min.js" xml:space="preserve"></script>
+<script src="/resources/scripts/load.js" xml:space="preserve"></script>
+</body>

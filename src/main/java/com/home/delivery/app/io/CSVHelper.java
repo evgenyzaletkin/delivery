@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * Created by evgeny on 05.05.15.
  */
 @Named
-public class CSVFileReader {
+public class CSVHelper {
 
     public List<Delivery> readDeliveries(Reader in) {
         return getRecords(in).

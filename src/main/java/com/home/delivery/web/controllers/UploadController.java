@@ -2,7 +2,7 @@ package com.home.delivery.web.controllers;
 
 import com.home.delivery.app.DeliveriesService;
 import com.home.delivery.app.Delivery;
-import com.home.delivery.app.io.CSVFileReader;
+import com.home.delivery.app.io.CSVHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,12 +23,12 @@ import java.util.List;
 @RequestMapping("/upload")
 public class UploadController {
 
-    private final CSVFileReader csvFileReader;
+    private final CSVHelper csvHelper;
     private final DeliveriesService deliveriesService;
 
     @Inject
-    public UploadController(CSVFileReader csvFileReader, DeliveriesService deliveriesService) {
-        this.csvFileReader = csvFileReader;
+    public UploadController(CSVHelper csvHelper, DeliveriesService deliveriesService) {
+        this.csvHelper = csvHelper;
         this.deliveriesService = deliveriesService;
     }
 
@@ -42,7 +42,7 @@ public class UploadController {
         if (!file.isEmpty()) {
             InputStream inputStream = file.getInputStream();
             InputStreamReader isr = new InputStreamReader(inputStream);
-            List<Delivery> deliveries = csvFileReader.readDeliveries(isr);
+            List<Delivery> deliveries = csvHelper.readDeliveries(isr);
             deliveriesService.addDeliveries(deliveries);
             return "redirect:deliveries";
         } else throw new IllegalStateException("File must not be empty");

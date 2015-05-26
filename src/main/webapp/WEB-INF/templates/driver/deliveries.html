@@ -18,17 +18,28 @@
     <div th:each="entry: ${loadsAndShifts.entrySet()}">
         <div class="row" th:with="load = ${entry.key}">
             <div class="col-md-8">
-                <div class="form-inline">
+                <form class="form-inline" action="/driver/download">
+
+                    <div>
+                        <label th:text="#{deliveries.shift}">Shift</label>
+                        <input type="date" th:value="${load.date}" name="date">Date</input>
+                    </div>
+
                     <div>
                         <label th:text="#{deliveries.shift}">Shift</label>
                         <p th:text="#{${'shift.' + load.shift}}">Shift</p>
+                        <input type="text" th:value="#{${'shift.' + load.shift}}">Shift</input>
+                        <input type="text" hidden="hidden"  th:value="${load.shift}" name="shift">Shift</input>
                     </div>
 
                     <div th:if="${load.tour != null}">
                         <label th:text="#{loads.distance}"></label>
                         <p th:text="${load.tour.distance}"></p>
                     </div>
-                </div>
+                    <div>
+                        <button type="submit" class="btn btn-default">Submit</button>
+                    </div>
+                </form>
             </div>
 
         </div>
