@@ -2,10 +2,8 @@ package com.home.delivery.app;
 
 import com.home.delivery.app.paths.tsp.Tour;
 
-import javax.annotation.concurrent.ThreadSafe;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by evgeny on 08.05.15.
@@ -14,14 +12,7 @@ public final class Load {
     private Tour<String> tour;
     private DeliveryShift shift;
     private LocalDate date;
-    private List<Delivery> deliveries = Collections.emptyList();
     private boolean isRouted = false;
-
-    public Load() {
-
-    }
-
-
 
     public Tour<String> getTour() {
         return tour;
@@ -47,14 +38,6 @@ public final class Load {
         this.date = date;
     }
 
-    public List<Delivery> getDeliveries() {
-        return deliveries;
-    }
-
-    public void setDeliveries(List<Delivery> deliveries) {
-        this.deliveries = deliveries;
-    }
-
     public boolean isRouted() {
         return isRouted;
     }
@@ -64,13 +47,16 @@ public final class Load {
     }
 
     @Override
-    public String toString() {
-        return "Load{" +
-                "tour=" + tour +
-                ", shift=" + shift +
-                ", date=" + date +
-                ", deliveries=" + deliveries +
-                ", isRouted=" + isRouted +
-                '}';
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Load load = (Load) o;
+        return Objects.equals(shift, load.shift) &&
+                Objects.equals(date, load.date);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(shift, date);
     }
 }

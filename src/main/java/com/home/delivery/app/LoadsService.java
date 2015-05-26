@@ -6,9 +6,7 @@ import com.home.delivery.app.paths.RoutingService;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.time.LocalDate;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
@@ -45,27 +43,26 @@ public class LoadsService {
     }
 
 
-    /**
-     * 1. Create all loads for the current day;
-     * 2. Fill loads with the preferable deliveries by the time shift;
-     * 3. Fill loads with the deliveries that may be placed into the load completely;
-     * 4. Fill loads until they are full.
-     * @param date
-     * @param shift
-     * @return
-     */
-    public synchronized Load createNewLoad(LocalDate date, DeliveryShift shift) {
+    public Load createNewLoad(LocalDate date, DeliveryShift shift) {
         LoadKey key = new LoadKey(date, shift);
         return loads.computeIfAbsent(key, k -> {
             Load load = new Load();
             load.setDate(date);
             load.setShift(shift);
             gatherPartsForNewLoad(load);
-            loads.put(new LoadKey(date, shift), load);
             return load;
         });
     }
 
+
+    private final static Comparator<DeliveryPart> PARTS_COMPARATOR = new Comparator<DeliveryPart>() {
+        @Override
+        public int compare(DeliveryPart p1, DeliveryPart p2) {
+            float p1v = p1.getItems() * p1.getDelivery().getVolumeNumber() / p1.getDelivery().getQuantity();
+            float p2v = p2.getItems() * p2.getDelivery().getVolumeNumber() / p2.getDelivery().getQuantity();
+            return Float.compare(p1v, p2v);
+        }
+    };
 
     void gatherPartsForNewLoad(Load load) {
         List<DeliveryPart> availableDeliveryPartsForLoad = getAvailableDeliveryPartsForLoad(load);
@@ -78,17 +75,21 @@ public class LoadsService {
         }
 
         double currentVolume = necessaryParts.stream().
-                mapToDouble(p -> p.getItems() * p.getDelivery().getVolumeNumber()).
+                mapToDouble(p -> p.getItems() * p.getDelivery().getVolumeNumber() / p.getDelivery().getQuantity()).
                 sum();
 
         if (currentVolume < MAX_VOLUME) {
             List<DeliveryPart> possibleParts = availableDeliveryPartsForLoad.stream().
-                    filter(p -> load.getShift() == null).collect(Collectors.toList());
+                    filter(p -> p.getDelivery().getDeliveryShift() == null).
+                    sorted(PARTS_COMPARATOR).
+                    collect(Collectors.toList());
+            Collections.reverse(possibleParts);
 
             for (Iterator<DeliveryPart> partIterator = possibleParts.iterator(); partIterator.hasNext();) {
                 DeliveryPart possiblePart = partIterator.next();
                 double availableVolume = MAX_VOLUME - currentVolume;
-                double partVolume = possiblePart.getItems() * possiblePart.getDelivery().getVolumeNumber();
+                double partVolume = possiblePart.getItems() * possiblePart.getDelivery().getVolumeNumber()
+                        / possiblePart.getDelivery().getQuantity();
                 if (availableVolume > partVolume) {
                     currentVolume += partVolume;
                     DeliveryPart newPart = new DeliveryPart(possiblePart.getDelivery(), possiblePart.getItems(), load);
@@ -123,18 +124,31 @@ public class LoadsService {
     }
 
 
-    public void updateLoad(Load load) {
-        double loadVolume = load.getDeliveries().stream().mapToDouble(Delivery::getVolumeNumber).sum();
-        if (loadVolume > MAX_VOLUME) throw new IllegalArgumentException(
-                String.format("The maximum volume is exceeded for load %s, %s ", load.getDate(), load.getShift()));
-        load.setIsRouted(false);
+    public void updateLoad(Load load, List<String> deliveriesIds, List<Integer> items) {
+
+        checkArgument(deliveriesIds.size() == items.size());
+        clearOldParts(load, deliveriesIds);
+        Iterator<Integer> itemsIterator = items.iterator();
+        for (String deliveriesId : deliveriesIds) {
+            Delivery d = deliveriesService.getDelivery(deliveriesId).get();
+            updateParts(new DeliveryPart(d, itemsIterator.next(), load));
+        }
         loads.put(new LoadKey(load.getDate(), load.getShift()), load);
+        load.setIsRouted(false);
         executorService.submit(() -> {
-            List<Delivery> deliveries = load.getDeliveries();
-            List<Delivery> sorted = routingService.buildRoute(deliveries);
-            load.setDeliveries(sorted);
+            List<Delivery> allDeliveries = getDeliveryPartsForLoad(load).stream().
+                    map(DeliveryPart::getDelivery).
+                    distinct().
+                    collect(Collectors.toList());
+            load.setTour(routingService.buildRoute(allDeliveries));
             load.setIsRouted(true);
         });
+    }
+
+    private void clearOldParts(Load load, List<String> deliveriesIds) {
+        getDeliveryPartsForLoad(load).stream().
+                filter(p -> !deliveriesIds.contains(p.getDelivery().getOrderNumber())).
+                forEach(p -> updateParts(new DeliveryPart(p.getDelivery(), 0, load)));
     }
 
     private class PartKey {
@@ -150,25 +164,19 @@ public class LoadsService {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-
             PartKey partKey = (PartKey) o;
-
-            if (deliveryNumber != null ? !deliveryNumber.equals(partKey.deliveryNumber) : partKey.deliveryNumber != null)
-                return false;
-            if (loadKey != null ? !loadKey.equals(partKey.loadKey) : partKey.loadKey != null) return false;
-
-            return true;
+            return Objects.equals(deliveryNumber, partKey.deliveryNumber) &&
+                    Objects.equals(loadKey, partKey.loadKey);
         }
 
         @Override
         public int hashCode() {
-            int result = deliveryNumber != null ? deliveryNumber.hashCode() : 0;
-            result = 31 * result + (loadKey != null ? loadKey.hashCode() : 0);
-            return result;
+            return Objects.hash(deliveryNumber, loadKey);
         }
     }
 
     ConcurrentMap<PartKey, DeliveryPart> deliveryParts = new ConcurrentHashMap<>();
+
 
     void updateParts(DeliveryPart newPart) {
         checkArgument(newPart.getItems() <= newPart.getDelivery().getQuantity());
@@ -178,7 +186,9 @@ public class LoadsService {
         DeliveryPart freePart = deliveryParts.get(freeKey);
         int freeItems;
         if (currentPart == null) {
-            checkArgument(freePart.getItems() <= newPart.getItems());
+            checkArgument(freePart.getItems() >= newPart.getItems(),
+                    "The number of available items %s is less than number of free items %s",
+                    freePart.getItems(), newPart.getItems());
             freeItems = freePart.getItems() - newPart.getItems();
         } else {
             checkArgument(freePart.getItems() + currentPart.getItems() >= newPart.getItems());
@@ -186,7 +196,8 @@ public class LoadsService {
         }
         DeliveryPart newFreePart = new DeliveryPart(freePart.getDelivery(), freeItems, null);
         deliveryParts.put(freeKey, newFreePart);
-        deliveryParts.put(currentKey, newPart);
+        if (newPart.getItems() == 0) deliveryParts.remove(currentKey);
+        else deliveryParts.put(currentKey, newPart);
     }
 
     DeliveryPart getFreeDelivery(Delivery d) {

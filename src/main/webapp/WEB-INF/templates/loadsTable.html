@@ -24,18 +24,23 @@
             <td th:text="#{deliveries.city}">City</td>
             <td th:text="#{deliveries.address}">Street</td>
             <td th:text="#{deliveries.zip}">Street</td>
+            <td th:text="#{deliveries.availableparts}">Available Parts</td>
+            <td th:text="#{deliveries.parts}">Parts</td>
         </tr>
         </thead>
 
         <tbody th:id="${tbodyId}">
-        <tr th:each="d : ${deliveries}">
+        <tr th:each="d : ${deliveries}" th:class="${d.delivery.orderNumber}">
             <td><input type="checkbox"/></td>
-            <td><input type="text" readonly="readonly" name="delivery" th:value="${d.orderNumber}"/> </td>
-            <td th:text="${d.deliveryShift == null} ? '' : #{${'shift.' + d.deliveryShift}}">M</td>
-            <td th:text="${d.volumeNumber}"></td>
-            <td th:text="${d.city}">New York</td>
-            <td th:text="${d.street}">1080 Bearses way</td>
-            <td th:text="${d.zip}">23800</td>
+            <td><input type="text" readonly="readonly" name="delivery" th:value="${d.delivery.orderNumber}"/> </td>
+            <td th:text="${d.delivery.deliveryShift == null} ? '' : #{${'shift.' + d.delivery.deliveryShift}}">M</td>
+            <td class="total" th:text="${d.delivery.volumeNumber * d.items / d.delivery.quantity}"></td>
+            <td hidden="hidden" class="single" th:text="${d.delivery.volumeNumber / d.delivery.quantity}"></td>
+            <td th:text="${d.delivery.city}">New York</td>
+            <td th:text="${d.delivery.street}">1080 Bearses way</td>
+            <td th:text="${d.delivery.zip}">23800</td>
+            <td class="allitems" th:text="${d.items}">10</td>
+            <td class="items"><input type="number" name="items" th:value="${d.items}"/></td>
         </tr>
         </tbody>
     </table>

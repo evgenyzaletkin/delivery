@@ -34,6 +34,13 @@ public class DeliveriesService {
     }
 
     public void addDeliveries(Collection<Delivery> deliveries) {
+//        throw new RuntimeException(deliveries.
+//                stream().
+//                collect(Collectors.groupingBy(Delivery::getDeliveryDate)).
+//                entrySet().
+//                stream().
+//                map(e -> new HashMap.SimpleEntry<>(e.getKey(), e.getValue().stream().mapToDouble(Delivery::getVolumeNumber).sum())).
+//                collect(Collectors.toList()).toString());
         deliveries.forEach(d -> this.deliveries.put(d.getOrderNumber(), d));
     }
 

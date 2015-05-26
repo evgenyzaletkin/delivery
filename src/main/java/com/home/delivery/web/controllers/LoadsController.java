@@ -1,6 +1,9 @@
 package com.home.delivery.web.controllers;
 
-import com.home.delivery.app.*;
+import com.home.delivery.app.DeliveriesService;
+import com.home.delivery.app.DeliveryShift;
+import com.home.delivery.app.Load;
+import com.home.delivery.app.LoadsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -10,8 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by evgeny on 19.05.15.
@@ -43,14 +47,8 @@ public class LoadsController {
         Load load = loadsService.getLoad(date, shift);
         if (load == null) load = loadsService.createNewLoad(date, shift);
         model.addAttribute("load", load);
-        List<Delivery> deliveriesForLoad = load.getDeliveries();
-        List<Delivery> freeDeliveries = deliveriesService.getAllDeliveries().
-                stream().
-                filter(d -> date.isEqual(d.getDeliveryDate())).
-                filter(d -> d.getLoad() == null).
-                filter(d -> !deliveriesForLoad.contains(d)).
-                collect(Collectors.toList());
-        model.addAttribute("deliveries", freeDeliveries);
+        model.addAttribute("currentParts", loadsService.getDeliveryPartsForLoad(load));
+        model.addAttribute("availableParts", loadsService.getAvailableDeliveryPartsForLoad(load));
         return "load";
     }
 
@@ -58,16 +56,7 @@ public class LoadsController {
     public String updateLoad(Load load,
                              @RequestParam(value = "delivery", defaultValue = "") List<String> deliveriesId,
                              @RequestParam(value = "items", defaultValue = "") List<Integer> items) {
-        Load oldLoad = loadsService.getLoad(load.getDate(), load.getShift());
-        oldLoad.getDeliveries().forEach(d -> d.setLoad(null));
-        List<Delivery> deliveries = deliveriesId.stream().
-                map(deliveriesService::getDelivery).
-                filter(Optional::isPresent).
-                map(Optional::get).
-                collect(Collectors.toList());
-        deliveries.forEach(d -> d.setLoad(load));
-        load.setDeliveries(deliveries);
-        loadsService.updateLoad(load);
+        loadsService.updateLoad(load, deliveriesId, items);
         return "redirect:deliveries?date=" + load.getDate() + "&not_loaded=true";
     }
 

@@ -33,49 +33,40 @@ public class DefaultRoutingService implements RoutingService
 
 
     @Override
-    public List<Delivery> buildRoute(List<Delivery> deliveries) {
-        Map<String, List<Delivery>> groupedByAddress = deliveries.stream().collect(Collectors.groupingBy(this::mapToAddress));
+    public Tour<String> buildRoute(List<Delivery> deliveries) {
+        Map<String, List<Delivery>> groupedByAddress = deliveries.stream().collect(Collectors.groupingBy(Utils::mapToAddress));
         List<String> waypoints = new ArrayList<>(groupedByAddress.keySet());
-        waypoints.add(ORIGIN_ADDRESS);
+        waypoints.add(Utils.ORIGIN_ADDRESS);
         long l = System.currentTimeMillis();
         Map<RouteElement, Integer> distances = googleMapsService.getDistances(waypoints, waypoints);
         log.info("Time to get distances " + (System.currentTimeMillis() - l));
         l = System.currentTimeMillis();
         DistancesProvider<String> distancesProvider = new SimpleDistanceProvider(distances);
-        TspSolver<String> tspSolver = new BranchAndBoundTspSolver<>(ORIGIN_ADDRESS,
+        TspSolver<String> tspSolver = new BranchAndBoundTspSolver<>(Utils.ORIGIN_ADDRESS,
                 Lists.newArrayList(groupedByAddress.keySet()), distancesProvider);
         Tour<String> optimal = tspSolver.findMinPath();
         log.info("Time to get path " + (System.currentTimeMillis() - l));
         log.info(String.format("The found tour is %s", optimal));
-        return optimal.getPath().stream().
-                filter(s -> !s.equals(ORIGIN_ADDRESS)).
-                flatMap(s -> groupedByAddress.get(s).stream()).
-                collect(Collectors.toList());
+        return optimal;
     }
 
     private int getDistanceForPath(List<String> points, DistancesProvider<String> distancesProvider) {
         if (points.size() == 0) return 0;
         Iterator<String> iterator = points.iterator();
         String previous = iterator.next();
-        int distance = distancesProvider.getDistance(ORIGIN_ADDRESS, previous);
+        int distance = distancesProvider.getDistance(Utils.ORIGIN_ADDRESS, previous);
         while (iterator.hasNext()) {
             String next = iterator.next();
             distance += distancesProvider.getDistance(previous, next);
             previous = next;
         }
-        distance += distancesProvider.getDistance(previous, ORIGIN_ADDRESS);
+        distance += distancesProvider.getDistance(previous, Utils.ORIGIN_ADDRESS);
         return distance;
     }
 
 
-    private static final String ORIGIN_ADDRESS = "RALEIGH, NC 27603";
 
-    String mapToAddress(Delivery d) {
-        return d.getStreet() + ", " + mapToCity(d);
-    }
 
-    String mapToCity(Delivery d) {
-        return d.getCity() + ", " + d.getState() + " " + d.getZip();
-    }
+
 
 }

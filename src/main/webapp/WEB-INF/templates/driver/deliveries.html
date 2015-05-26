@@ -16,20 +16,20 @@
 
 
     <div th:each="entry: ${loadsAndShifts.entrySet()}">
-        <div class="row" th:with="shift = ${entry.key}">
+        <div class="row" th:with="load = ${entry.key}">
             <div class="col-md-8">
                 <div class="form-inline">
 
                     <div>
                         <label th:text="#{deliveries.shift}">Shift</label>
-                        <p th:text="#{${'shift.' + shift}}">Shift</p>
+                        <p th:text="#{${'shift.' + load.shift}}">Shift</p>
                     </div>
                 </div>
             </div>
 
         </div>
-        <div class="row" th:with="load = ${entry.value}">
-            <div class="col-md-12" th:if="${load != null}">
+        <div class="row" th:with="parts = ${entry.value}">
+            <div class="col-md-12" th:if="${parts != null}">
                 <table class="table table-striped">
                     <thead>
                     <tr>
@@ -44,21 +44,21 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="d, iterStat: ${load.deliveries}">
+                    <tr th:each="p, iterStat: ${parts}">
                         <td th:text="${iterStat.count}">NC</td>
-                        <td th:text="${d.state}">NC</td>
-                        <td th:text="${d.city}">NY</td>
-                        <td th:text="${d.zip}">02673</td>
-                        <td th:text="${d.street}">blah</td>
-                        <td th:text="${d.deliveryDate}">date</td>
-                        <td th:text="${d.clientName}">client</td>
-                        <td th:text="${d.phoneNumber}">777-7-777</td>
+                        <td th:text="${p.delivery.state}">NC</td>
+                        <td th:text="${p.delivery.city}">NY</td>
+                        <td th:text="${p.delivery.zip}">02673</td>
+                        <td th:text="${p.delivery.street}">blah</td>
+                        <td th:text="${p.delivery.deliveryDate}">date</td>
+                        <td th:text="${p.delivery.clientName}">client</td>
+                        <td th:text="${p.delivery.phoneNumber}">777-7-777</td>
                     </tr>
                     </tbody>
 
                 </table>
             </div>
-            <div class="col-md-8" th:if="${load == null}">
+            <div class="col-md-8" th:if="${parts == null}">
                 <div class="warn">
                     <p th:text="#{driver.load}">Load is not constructed</p>
                 </div>

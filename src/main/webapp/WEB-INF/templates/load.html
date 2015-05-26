@@ -36,7 +36,7 @@
                 <div class="panel-body">
                     <p th:text="#{loads.message}"></p>
                 </div>
-                <div th:include="loadsTable::table (assigned,*{deliveries})">...</div>
+                <div th:include="loadsTable::table (assigned, ${currentParts})">...</div>
             </div>
         </div>
         <!--<input id="submit" type="submit" value="ok"/>-->
@@ -78,13 +78,13 @@
     <div class="row">
         <div class="panel panel-default col-md-12">
             <div class="panel-heading" th:text="#{loads.free}"></div>
-            <div th:include="loadsTable::table (unassigned, ${deliveries})">...</div>
+            <div th:include="loadsTable::table (unassigned, ${availableParts})">...</div>
         </div>
     </div>
 
 </div>
 
 <script src="http://code.jquery.com/jquery-2.1.4.min.js"/>
-<script src="/resources/scripts/app.js"/>
+<script src="/resources/scripts/load.js"/>
 </body>
 </html>

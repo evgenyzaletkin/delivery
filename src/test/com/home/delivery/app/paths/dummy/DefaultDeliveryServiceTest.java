@@ -50,8 +50,7 @@ public class DefaultDeliveryServiceTest
 
         GoogleMapsService googleMapsService = new GoogleMapsService();
         DefaultRoutingService routingService = new DefaultRoutingService(googleMapsService);
-        List<Delivery> deliveries1 = routingService.buildRoute(deliveries);
-        System.out.println(deliveries1);
+        System.out.println(routingService.buildRoute(deliveries));
     }
 
     @Test
@@ -72,8 +71,7 @@ public class DefaultDeliveryServiceTest
 
         GoogleMapsService googleMapsService = new GoogleMapsService();
         DefaultRoutingService routingService = new DefaultRoutingService(googleMapsService);
-        List<Delivery> deliveries1 = routingService.buildRoute(deliveries);
-        System.out.println(deliveries1);
+        System.out.println(routingService.buildRoute(deliveries));
     }
 
 
