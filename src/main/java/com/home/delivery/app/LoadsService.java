@@ -43,15 +43,20 @@ public class LoadsService {
     }
 
 
-    public Load createNewLoad(LocalDate date, DeliveryShift shift) {
-        LoadKey key = new LoadKey(date, shift);
-        return loads.computeIfAbsent(key, k -> {
+    public synchronized Load createNewLoad(LocalDate date, DeliveryShift shift) {
+        List<Load> loadsForDay = new ArrayList<>(3);
+        for (DeliveryShift deliveryShift : DeliveryShift.values()) {
             Load load = new Load();
             load.setDate(date);
-            load.setShift(shift);
-            gatherPartsForNewLoad(load);
-            return load;
-        });
+            load.setShift(deliveryShift);
+            gatherFullDeliveries(load);
+            loadsForDay.add(load);
+        }
+        for (Load load : loadsForDay) {
+            gatherByParts(load);
+            loads.put(new LoadKey(load.getDate(), load.getShift()), load);
+        }
+        return loadsForDay.stream().filter(l -> l.getShift() == shift).findAny().get();
     }
 
 
@@ -64,7 +69,7 @@ public class LoadsService {
         }
     };
 
-    void gatherPartsForNewLoad(Load load) {
+    void gatherFullDeliveries(Load load) {
         List<DeliveryPart> availableDeliveryPartsForLoad = getAvailableDeliveryPartsForLoad(load);
         List<DeliveryPart> necessaryParts = availableDeliveryPartsForLoad.stream().
                 filter(p -> load.getShift() == p.getDelivery().getDeliveryShift()).
@@ -74,18 +79,16 @@ public class LoadsService {
             updateParts(newPart);
         }
 
-        double currentVolume = necessaryParts.stream().
-                mapToDouble(p -> p.getItems() * p.getDelivery().getVolumeNumber() / p.getDelivery().getQuantity()).
-                sum();
+        double currentVolume = necessaryParts.stream().mapToDouble(DeliveryPart::getVolume).sum();
 
         if (currentVolume < MAX_VOLUME) {
             List<DeliveryPart> possibleParts = availableDeliveryPartsForLoad.stream().
                     filter(p -> p.getDelivery().getDeliveryShift() == null).
                     sorted(PARTS_COMPARATOR).
                     collect(Collectors.toList());
-            Collections.reverse(possibleParts);
+//            Collections.reverse(possibleParts);
 
-            for (Iterator<DeliveryPart> partIterator = possibleParts.iterator(); partIterator.hasNext();) {
+            for (Iterator<DeliveryPart> partIterator = possibleParts.iterator(); partIterator.hasNext(); ) {
                 DeliveryPart possiblePart = partIterator.next();
                 double availableVolume = MAX_VOLUME - currentVolume;
                 double partVolume = possiblePart.getItems() * possiblePart.getDelivery().getVolumeNumber()
@@ -97,17 +100,24 @@ public class LoadsService {
                     partIterator.remove();
                 }
             }
+        }
+    }
 
-            for (DeliveryPart possiblePart : possibleParts) {
+    void gatherByParts(Load load) {
+        List<DeliveryPart> availableDeliveryPartsForLoad = getAvailableDeliveryPartsForLoad(load);
+        Collections.reverse(availableDeliveryPartsForLoad);
+        double currentVolume = getDeliveryPartsForLoad(load).stream().mapToDouble(DeliveryPart::getVolume).sum();
+        if (currentVolume < MAX_VOLUME) {
+            for (DeliveryPart possiblePart : availableDeliveryPartsForLoad) {
                 double availableVolume = MAX_VOLUME - currentVolume;
                 double itemVolume = possiblePart.getDelivery().getVolumeNumber() / possiblePart.getDelivery().getQuantity();
                 int items = (int) (availableVolume / itemVolume);
                 if (items > 0) {
                     DeliveryPart part = new DeliveryPart(possiblePart.getDelivery(), items, load);
+                    currentVolume += part.getVolume();
                     updateParts(part);
                 }
             }
-
         }
     }
 
@@ -134,14 +144,12 @@ public class LoadsService {
             updateParts(new DeliveryPart(d, itemsIterator.next(), load));
         }
         loads.put(new LoadKey(load.getDate(), load.getShift()), load);
-        load.setIsRouted(false);
         executorService.submit(() -> {
             List<Delivery> allDeliveries = getDeliveryPartsForLoad(load).stream().
                     map(DeliveryPart::getDelivery).
                     distinct().
                     collect(Collectors.toList());
             load.setTour(routingService.buildRoute(allDeliveries));
-            load.setIsRouted(true);
         });
     }
 

@@ -333,7 +333,6 @@ public class BranchAndBoundTspSolverTest {
         BranchAndBoundTspSolver<String> tsp = new BranchAndBoundTspSolver<String>(origin, waypoints, provider);
         Tour<String> minPath = tsp.findMinPath();
 
-
     }
 
 }

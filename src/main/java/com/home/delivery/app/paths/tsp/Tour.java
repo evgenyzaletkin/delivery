@@ -30,6 +30,10 @@ public class Tour<T>
         return Collections.unmodifiableList(points);
     }
 
+    public int getDistance() {
+        return distance;
+    }
+
     @Override
     public String toString()
     {

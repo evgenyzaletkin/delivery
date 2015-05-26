@@ -6,11 +6,13 @@ import com.home.delivery.app.Delivery;
 import com.home.delivery.app.DeliveryShift;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 
 import javax.inject.Named;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Writer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -68,6 +70,18 @@ public class CSVFileReader {
             CSVParser parser = CSVFormat.EXCEL.parse(in);
             return Lists.newArrayList(parser);
 
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void printCSV(Writer writer, List<String> header, List<List<String>> data) {
+        try {
+            CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withRecordSeparator("\n"));
+            printer.printRecord(header);
+            for (List<String> datum  : data) {
+                printer.printRecord(datum);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

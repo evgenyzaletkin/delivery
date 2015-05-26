@@ -19,17 +19,21 @@
         <div class="row" th:with="load = ${entry.key}">
             <div class="col-md-8">
                 <div class="form-inline">
-
                     <div>
                         <label th:text="#{deliveries.shift}">Shift</label>
                         <p th:text="#{${'shift.' + load.shift}}">Shift</p>
+                    </div>
+
+                    <div th:if="${load.tour != null}">
+                        <label th:text="#{loads.distance}"></label>
+                        <p th:text="${load.tour.distance}"></p>
                     </div>
                 </div>
             </div>
 
         </div>
         <div class="row" th:with="parts = ${entry.value}">
-            <div class="col-md-12" th:if="${parts != null}">
+            <div class="col-md-12" th:unless="${#lists.isEmpty(parts)}">
                 <table class="table table-striped">
                     <thead>
                     <tr>
@@ -58,7 +62,7 @@
 
                 </table>
             </div>
-            <div class="col-md-8" th:if="${parts == null}">
+            <div class="col-md-8" th:if="${#lists.isEmpty(parts)}">
                 <div class="warn">
                     <p th:text="#{driver.load}">Load is not constructed</p>
                 </div>

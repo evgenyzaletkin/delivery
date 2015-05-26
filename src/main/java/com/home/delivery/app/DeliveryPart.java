@@ -21,4 +21,8 @@ public class DeliveryPart {
     public Load getLoad() {
         return load;
     }
+    public Float getVolume() {
+        return items * delivery.getVolumeNumber() / delivery.getQuantity();
+    }
+
 }

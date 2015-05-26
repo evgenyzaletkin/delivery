@@ -34,7 +34,7 @@
             <div class="panel panel-default col-md-12">
                 <div class="panel-heading" th:text="#{loads.assigned}"></div>
                 <div class="panel-body">
-                    <p th:text="#{loads.message}"></p>
+                    <p th:utext="#{loads.message}"></p>
                 </div>
                 <div th:include="loadsTable::table (assigned, ${currentParts})">...</div>
             </div>

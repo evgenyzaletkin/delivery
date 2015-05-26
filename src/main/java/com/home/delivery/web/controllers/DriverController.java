@@ -46,11 +46,10 @@ public class DriverController {
             Load load = loadsService.getLoad(date, shift);
             if (load != null) {
                 List<DeliveryPart> deliveryPartsForLoad = loadsService.getDeliveryPartsForLoad(load);
-                if (load.isRouted()) {
+                if (load.getTour() != null) {
                     Map<String, List<DeliveryPart>> groupedByAddresses = deliveryPartsForLoad.
                             stream().
-                            collect(Collectors.
-                                    groupingBy(p -> Utils.mapToAddress(p.getDelivery())));
+                            collect(Collectors.groupingBy(p -> Utils.mapToAddress(p.getDelivery())));
                     deliveryPartsForLoad = load.getTour().getPath().stream().
                             filter(s -> !Utils.ORIGIN_ADDRESS.equals(s)).
                             flatMap(address -> groupedByAddresses.get(address).stream()).
@@ -62,5 +61,7 @@ public class DriverController {
         model.addAttribute("loadsAndShifts", partsByLoads);
         return "driver/deliveries";
     }
+
+
 
 }

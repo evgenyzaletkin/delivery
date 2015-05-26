@@ -62,6 +62,7 @@ $(document).ready(function () {
             var checkbox = $(checkboxes[i]);
             checkbox.attr("checked", false);
             var row = checkbox.parent().parent();
+            row.removeClass("warning");
             processRow(row, from, to);
         }
     };

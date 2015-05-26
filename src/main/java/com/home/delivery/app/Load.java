@@ -12,7 +12,6 @@ public final class Load {
     private Tour<String> tour;
     private DeliveryShift shift;
     private LocalDate date;
-    private boolean isRouted = false;
 
     public Tour<String> getTour() {
         return tour;
@@ -36,14 +35,6 @@ public final class Load {
 
     public void setDate(LocalDate date) {
         this.date = date;
-    }
-
-    public boolean isRouted() {
-        return isRouted;
-    }
-
-    public void setIsRouted(boolean isRouted) {
-        this.isRouted = isRouted;
     }
 
     @Override

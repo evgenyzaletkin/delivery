@@ -44,6 +44,7 @@ public class LoadsController {
 
     @RequestMapping(method = RequestMethod.GET, params = {"date", "shift"})
     public String showLoad(@RequestParam("date")LocalDate date, @RequestParam("shift") DeliveryShift shift, Model model) {
+        if (deliveriesService.getAllDeliveries().size() == 0) return "redirect:upload";
         Load load = loadsService.getLoad(date, shift);
         if (load == null) load = loadsService.createNewLoad(date, shift);
         model.addAttribute("load", load);
