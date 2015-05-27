@@ -40,18 +40,15 @@ public class DeliveryController {
     @RequestMapping(method = RequestMethod.GET)
     public String getDeliveries(Model model,
                                 @RequestParam(value = "date", required = false) LocalDate nullableDate,
-                                @RequestParam(value = "corrupted", defaultValue = "False") Boolean corrupted,
-                                @RequestParam(value = "not_loaded", defaultValue = "False") Boolean notLoaded){
+                                @RequestParam(value = "corrupted", defaultValue = "False") Boolean corrupted){
         LocalDate date = nullableDate == null && !corrupted ? LocalDate.of(2014, 9, 15) : nullableDate;
         Stream<Delivery> stream = deliveriesService.getAllDeliveries().stream();
         stream = date != null ? stream.filter(d -> date.equals(d.getDeliveryDate())) : stream;
         stream = corrupted ? stream.filter(DeliveriesService.CORRUPTED) : stream;
-        stream = notLoaded ? stream.filter(d -> d.getLoad() == null) : stream;
         List<Delivery> deliveries = stream.collect(Collectors.toList());
         model.addAttribute(DELIVERIES_ATTRIBUTE, deliveries);
         model.addAttribute("date", date);
         model.addAttribute("corrupted", corrupted);
-        model.addAttribute("not_loaded", notLoaded);
         return "deliveries";
     }
 
