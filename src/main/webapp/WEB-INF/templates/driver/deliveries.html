@@ -15,7 +15,7 @@
 <div class="container">
 
 
-    <div th:each="entry: ${loadsAndShifts.entrySet()}">
+    <div th:unless="${#maps.isEmpty(loadsAndShifts)}" th:each="entry: ${loadsAndShifts.entrySet()}">
         <div class="row" th:with="load = ${entry.key}">
             <div class="col-md-8">
                 <form class="form-inline" action="/driver/download">
@@ -84,6 +84,12 @@
             </div>
         </div>
 
+    </div>
+
+    <div class="row" th:if="${#maps.isEmpty(loadsAndShifts)}">
+        <div class="col-md-8">
+            <div th:text="#{driver.noloads}"> No loads</div>
+        </div>
     </div>
 </div>
 
