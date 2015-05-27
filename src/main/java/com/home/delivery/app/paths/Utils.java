@@ -7,6 +7,8 @@ import com.home.delivery.app.Delivery;
  */
 public class Utils {
 
+    public static String NO_ORDER_NUMBER = "Number is missed";
+
     private Utils(){}
 
     public static String mapToAddress(Delivery d) {

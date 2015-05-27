@@ -50,7 +50,7 @@
                 <tbody>
                 <tr th:each="d : ${deliveries}">
                     <td><a href="/deliveries"
-                           th:href="@{'/deliveries/' + ${d.orderNumber}}"
+                           th:href="@{'/deliveries/' + ${d.id}}"
                            th:text="${d.orderNumber}">Some Text</a>
                     </td>
                     <td th:text="${d.clientName}">Ivan</td>

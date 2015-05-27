@@ -154,7 +154,7 @@ public class LoadsService {
 
     private void clearOldParts(Load load, List<String> deliveriesIds) {
         getDeliveryPartsForLoad(load).stream().
-                filter(p -> !deliveriesIds.contains(p.getDelivery().getOrderNumber())).
+                filter(p -> !deliveriesIds.contains(p.getDelivery().getId())).
                 forEach(p -> updateParts(new DeliveryPart(p.getDelivery(), 0, load)));
     }
 
@@ -215,8 +215,8 @@ public class LoadsService {
 
     private PartKey createPartKey(Delivery d, Load l) {
         return l == null ?
-                new PartKey(d.getOrderNumber(), null) :
-                new PartKey(d.getOrderNumber(), new LoadKey(l.getDate(), l.getShift()));
+                new PartKey(d.getId(), null) :
+                new PartKey(d.getId(), new LoadKey(l.getDate(), l.getShift()));
     }
 
 

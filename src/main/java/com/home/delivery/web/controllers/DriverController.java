@@ -97,7 +97,7 @@ public class DriverController {
             strings.add(part.getDelivery().getState());
             strings.add(part.getDelivery().getZip() + "");
             strings.add(part.getDelivery().getDeliveryDate().toString());
-            strings.add(part.getDelivery().getOrderNumber());
+            strings.add(part.getDelivery().getId() + "");
             strings.add(part.getItems() + "");
             strings.add(part.getDelivery().getClientName());
             strings.add(part.getDelivery().getPhoneNumber());

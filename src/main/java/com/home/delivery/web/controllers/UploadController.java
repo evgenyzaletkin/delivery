@@ -2,6 +2,7 @@ package com.home.delivery.web.controllers;
 
 import com.home.delivery.app.DeliveriesService;
 import com.home.delivery.app.Delivery;
+import com.home.delivery.app.ToolsService;
 import com.home.delivery.app.io.CSVHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,11 +28,13 @@ public class UploadController {
 
     private final CSVHelper csvHelper;
     private final DeliveriesService deliveriesService;
+    private final ToolsService toolsService;
 
     @Inject
-    public UploadController(CSVHelper csvHelper, DeliveriesService deliveriesService) {
+    public UploadController(CSVHelper csvHelper, DeliveriesService deliveriesService, ToolsService toolsService) {
         this.csvHelper = csvHelper;
         this.deliveriesService = deliveriesService;
+        this.toolsService = toolsService;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -46,6 +49,8 @@ public class UploadController {
             InputStream inputStream = file.getInputStream();
             InputStreamReader isr = new InputStreamReader(inputStream);
             List<Delivery> deliveries = csvHelper.readDeliveries(isr);
+//            Merging of csvs files is no longer supported
+            toolsService.resetAll();
             deliveriesService.addDeliveries(deliveries);
             return "redirect:deliveries?corrupted=true";
         } else throw new IllegalStateException("File must not be empty");

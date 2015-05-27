@@ -1,6 +1,7 @@
 package com.home.delivery.app;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -10,6 +11,7 @@ import java.time.LocalDate;
  * Created by evgeny on 05.05.15.
  */
 public final class Delivery {
+    private String id;
     @NotNull private LocalDate deliveryDate;
     private DeliveryShift deliveryShift;
 //    private final String originName;
@@ -19,23 +21,24 @@ public final class Delivery {
 //    private final Integer originZip;
 //    private final String originCountry;
     @NotEmpty private String clientName;
-    private String street;
-    private String city;
-    private String state;
-    private Integer zip;
+    @NotEmpty private String street;
+    @NotEmpty private String city;
+    @NotEmpty private String state;
+    @Range(min = 1001, max = 99999) private Integer zip;
 //    private final String destinationCountry;
     private String phoneNumber;
     @NotEmpty private String orderNumber;
     @Min(0) private Float volumeNumber;
     @Min(1) private Integer quantity;
-    private Load load;
+    boolean isValid = true;
 
     public Delivery() {
     }
 
-    public Delivery(LocalDate deliveryDate, DeliveryShift deliveryShift, String clientName, String street,
+    public Delivery(String id, LocalDate deliveryDate, DeliveryShift deliveryShift, String clientName, String street,
                     String city, String state, Integer destinationZip, String phoneNumber,
                     String orderNumber, Float volumeNumber, Integer quantity) {
+        this.id = id;
         this.deliveryDate = deliveryDate;
         this.deliveryShift = deliveryShift;
         this.clientName = clientName;
@@ -47,6 +50,22 @@ public final class Delivery {
         this.orderNumber = orderNumber;
         this.volumeNumber = volumeNumber;
         this.quantity = quantity;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
     }
 
     public LocalDate getDeliveryDate() {
@@ -113,13 +132,7 @@ public final class Delivery {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getOrderNumber() {
-        return orderNumber;
-    }
 
-    public void setOrderNumber(String orderNumber) {
-        this.orderNumber = orderNumber;
-    }
 
     public Float getVolumeNumber() {
         return volumeNumber;
@@ -137,12 +150,12 @@ public final class Delivery {
         this.quantity = quantity;
     }
 
-    public Load getLoad() {
-        return load;
+    public boolean isValid() {
+        return isValid;
     }
 
-    public void setLoad(Load load) {
-        this.load = load;
+    public void setIsValid(boolean isValid) {
+        this.isValid = isValid;
     }
 
     @Override

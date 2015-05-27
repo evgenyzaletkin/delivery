@@ -4,6 +4,7 @@ import com.home.delivery.app.DeliveriesService;
 import com.home.delivery.app.Delivery;
 import com.home.delivery.app.DeliveryShift;
 import com.home.delivery.web.ResourceNotFoundException;
+import com.home.delivery.web.validators.DeliveryValidator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
@@ -26,14 +27,17 @@ import java.util.stream.Stream;
 public class DeliveryController {
 
     private final DeliveriesService deliveriesService;
+    private final DeliveryValidator deliveryValidator;
     private static final Log log = LogFactory.getLog(DeliveryController.class);
     private static final String DELIVERIES_ATTRIBUTE = "deliveries";
     private static final String DELIVERY_ATTRIUBTE = "delivery";
     private static final String ALL_SHIFTS_ATTRIBUTE = "allShifts";
 
+
     @Inject
-    public DeliveryController(DeliveriesService deliveriesService) {
+    public DeliveryController(DeliveriesService deliveriesService, DeliveryValidator deliveryValidator) {
         this.deliveriesService = deliveriesService;
+        this.deliveryValidator = deliveryValidator;
     }
 
 
@@ -44,8 +48,10 @@ public class DeliveryController {
         LocalDate date = nullableDate == null && !corrupted ? LocalDate.of(2014, 9, 15) : nullableDate;
         Stream<Delivery> stream = deliveriesService.getAllDeliveries().stream();
         stream = date != null ? stream.filter(d -> date.equals(d.getDeliveryDate())) : stream;
-        stream = corrupted ? stream.filter(DeliveriesService.CORRUPTED) : stream;
-        List<Delivery> deliveries = stream.collect(Collectors.toList());
+        stream = corrupted ? stream.filter(d -> !d.isValid()) : stream;
+        List<Delivery> deliveries =  stream.
+                sorted((d1, d2) -> d1.getOrderNumber().compareTo(d2.getOrderNumber())).
+                collect(Collectors.toList());
         model.addAttribute(DELIVERIES_ATTRIBUTE, deliveries);
         model.addAttribute("date", date);
         model.addAttribute("corrupted", corrupted);
@@ -65,6 +71,7 @@ public class DeliveryController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String updateDelivery(@Valid Delivery delivery, BindingResult bindingResult) {
+        deliveryValidator.validate(delivery, bindingResult);
         if (bindingResult.hasErrors())
             return "delivery";
         deliveriesService.addDeliveries(Collections.singletonList(delivery));

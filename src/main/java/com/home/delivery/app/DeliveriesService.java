@@ -1,5 +1,7 @@
 package com.home.delivery.app;
 
+import com.home.delivery.app.paths.Utils;
+
 import javax.inject.Named;
 import java.util.Collection;
 import java.util.Optional;
@@ -16,20 +18,32 @@ public class DeliveriesService {
 
     private final ConcurrentMap<String, Delivery> deliveries = new ConcurrentHashMap<>();
 
-    public static final Predicate<Delivery> CORRUPTED =
-            d -> d.getClientName() == null ||
+    private static final Predicate<Delivery> CORRUPTED =
+            d -> Utils.NO_ORDER_NUMBER.equals(d.getOrderNumber()) ||
+                    d.getClientName() == null ||
                     d.getDeliveryDate() == null ||
                     d.getCity() == null ||
                     d.getState() == null ||
                     d.getStreet() == null ||
                     d.getZip() == null ||
-                    d.getVolumeNumber() == null;
+                    d.getQuantity() == 0 ||
+                    d.getVolumeNumber() == 0.0;
 
-    public static final Predicate<Delivery> VALID = CORRUPTED.negate();
 
     public Collection<Delivery> getValidDeliveries() {
-        return deliveries.values().stream().filter(VALID).collect(Collectors.toList());
+        return deliveries.
+                values().
+                stream().
+                filter(Delivery::isValid).
+                collect(Collectors.toList());
     }
+
+//    public Collection<Delivery> getCorruptedDeliveries() {
+//        return deliveries.
+//                values().
+//                stream().
+//                filter(Delivery::isValid).collect(Collectors.toList());
+//    }
 
     public Collection<Delivery> getAllDeliveries() {return deliveries.values();}
 
@@ -45,11 +59,19 @@ public class DeliveriesService {
 //                stream().
 //                map(e -> new HashMap.SimpleEntry<>(e.getKey(), e.getValue().stream().mapToDouble(Delivery::getVolumeNumber).sum())).
 //                collect(Collectors.toList()).toString());
-        deliveries.forEach(d -> this.deliveries.put(d.getOrderNumber(), d));
+        deliveries.stream().filter(CORRUPTED).forEach(d -> d.setIsValid(false));
+        deliveries.stream().
+                collect(Collectors.groupingBy(Delivery::getOrderNumber)).
+                values().
+                stream().
+                filter(l -> l.size() != 1).
+                flatMap(Collection::stream).
+                forEach(d -> d.setIsValid(false));
+        deliveries.forEach(d -> this.deliveries.put(d.getId(), d));
     }
 
     public void removeDelivery(Delivery delivery) {
-        this.deliveries.remove(delivery.getOrderNumber());
+        this.deliveries.remove(delivery.getId());
     }
 
     public void reset() {

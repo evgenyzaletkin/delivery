@@ -1,7 +1,6 @@
 package com.home.delivery.web.controllers;
 
-import com.home.delivery.app.DeliveriesService;
-import com.home.delivery.app.LoadsService;
+import com.home.delivery.app.ToolsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -14,19 +13,18 @@ import javax.inject.Inject;
 @RequestMapping
 public class ToolsController {
 
-    private final DeliveriesService deliveriesService;
-    private final LoadsService loadsService;
+
+    private final ToolsService toolsService;
 
     @Inject
-    public ToolsController(DeliveriesService deliveriesService, LoadsService loadsService) {
-        this.deliveriesService = deliveriesService;
-        this.loadsService = loadsService;
+    public ToolsController(ToolsService toolsService) {
+        this.toolsService = toolsService;
     }
+
 
     @RequestMapping("/reset")
     public String clearAllData() {
-        deliveriesService.reset();
-        loadsService.reset();
+        toolsService.resetAll();
         return "redirect:deliveries";
     }
 }

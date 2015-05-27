@@ -5,6 +5,7 @@
     <meta charset="UTF-8"/>
     <title th:text="#{delivery.title} +' ' + ${delivery.orderNumber} ">Delivery</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/resources/css/common.css"/>
 </head>
 <body>
 
@@ -14,17 +15,23 @@
     <div class="row">
         <div class="col-md-4">
             <form action="/deliveries" method="post" th:action="@{/deliveries}" th:object="${delivery}">
+
+                <div class="form-group" hidden="hidden">
+                    <input class="form-control"  type="text" th:field="*{id}" th:value="*{id}"/>
+                </div>
+
                 <div class="form-group">
                     <label th:text="#{deliveries.number}">Order Number</label>
-                    <input class="form-control" type="text" th:field="*{orderNumber}" readonly="readonly"
-                           th:value="*{orderNumber}"/>
+                    <input class="form-control" type="text" th:field="*{orderNumber}" th:value="*{orderNumber}"/>
                 </div>
+
+                <p th:if="${#fields.hasErrors('orderNumber')}" th:errors="*{orderNumber}">Incorrect name</p>
                 <div class="form-group">
                     <label th:text="#{deliveries.client}">Client Name</label>
                     <input class="form-control" type="text" th:value="*{clientName}" th:field="*{clientName}"
                            value="Ivan"/>
 
-                    <p th:if="${#fields.hasErrors('clientName')}" th:errors="*{clientName}">Incorrect name</p>
+                <p th:if="${#fields.hasErrors('clientName')}" th:errors="*{clientName}">Incorrect name</p>
                 </div>
                 <div class="form-group">
                     <label th:text="#{deliveries.phone}">Phone Number</label>
@@ -72,6 +79,13 @@
                     <input type="text" th:field="*{state}" th:value="*{state}" value="NY"/>
 
                     <p th:if="${#fields.hasErrors('state')}" th:errors="*{state}">Incorrect State</p>
+                </div>
+
+                <div class="form-group">
+                    <label th:text="#{deliveries.zip}">State</label>
+                    <input type="text" th:field="*{zip}" th:value="*{zip}" value="NY"/>
+
+                    <p th:if="${#fields.hasErrors('zip')}" th:errors="*{zip}">Incorrect State</p>
                 </div>
 
                 <div class="form-group">
