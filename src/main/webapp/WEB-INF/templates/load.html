@@ -12,6 +12,25 @@
 <div th:include="navigation::dispatcher_nav_bar"></div>
 <div class="container">
 
+
+    <div th:if="${submited}" class="row">
+        <div class="col-md-6 col-md-offset-4">
+            <div class="alert-success" th:text="#{loads.submited}">
+                Submitted.
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 col-md-offset-6">
+            <div class="btn-group">
+                <button name="previous" id="previous" class="btn btn-default" value="previous">Previous</button>
+                <button name="next" id="next" class="btn btn-default" value="next">Next</button>
+            </div>
+        </div>
+    </div>
+
+
     <form action="/loads" th:action="@{/loads}" method="post" th:object="${load}">
         <div class="row" hidden="hidden">
             <div class="col-md-6">

@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Created by evgeny on 08.05.15.
@@ -16,18 +17,21 @@ public class DeliveriesService {
     private final ConcurrentMap<String, Delivery> deliveries = new ConcurrentHashMap<>();
 
     public static final Predicate<Delivery> CORRUPTED =
-            d -> d.getClientName() != null &&
-                    d.getOrderNumber() != null &&
-                    d.getDeliveryDate() != null &&
-                    d.getCity() != null &&
-                    d.getState() != null &&
-                    d.getStreet() != null &&
-                    d.getZip() != null &&
-                    d.getVolumeNumber() != null;
+            d -> d.getClientName() == null ||
+                    d.getDeliveryDate() == null ||
+                    d.getCity() == null ||
+                    d.getState() == null ||
+                    d.getStreet() == null ||
+                    d.getZip() == null ||
+                    d.getVolumeNumber() == null;
 
-    public Collection<Delivery> getAllDeliveries() {
-        return deliveries.values();
+    public static final Predicate<Delivery> VALID = CORRUPTED.negate();
+
+    public Collection<Delivery> getValidDeliveries() {
+        return deliveries.values().stream().filter(VALID).collect(Collectors.toList());
     }
+
+    public Collection<Delivery> getAllDeliveries() {return deliveries.values();}
 
     public Optional<Delivery> getDelivery(String deliveryId) {
         return Optional.ofNullable(deliveries.get(deliveryId));
@@ -48,5 +52,8 @@ public class DeliveriesService {
         this.deliveries.remove(delivery.getOrderNumber());
     }
 
+    public void reset() {
+        deliveries.clear();
+    }
 
 }

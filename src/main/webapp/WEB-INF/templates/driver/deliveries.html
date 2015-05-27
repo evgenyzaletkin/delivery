@@ -22,22 +22,22 @@
 
                     <div>
                         <label th:text="#{deliveries.shift}">Shift</label>
-                        <input type="date" th:value="${load.date}" name="date">Date</input>
+                        <input readonly="readonly" type="date" th:value="${load.date}" name="date"/>
                     </div>
 
                     <div>
                         <label th:text="#{deliveries.shift}">Shift</label>
-                        <p th:text="#{${'shift.' + load.shift}}">Shift</p>
-                        <input type="text" th:value="#{${'shift.' + load.shift}}">Shift</input>
-                        <input type="text" hidden="hidden"  th:value="${load.shift}" name="shift">Shift</input>
+                        <input readonly="readonly" type="text" th:value="#{${'shift.' + load.shift}}"/>
+                        <input hidden="hidden" type="text" th:value="${load.shift}" name="shift"/>
                     </div>
 
                     <div th:if="${load.tour != null}">
                         <label th:text="#{loads.distance}"></label>
+
                         <p th:text="${load.tour.distance}"></p>
                     </div>
                     <div>
-                        <button type="submit" class="btn btn-default">Submit</button>
+                        <button type="submit" th:text="#{driver.download}" class="btn btn-default">Submit</button>
                     </div>
                 </form>
             </div>
@@ -48,24 +48,28 @@
                 <table class="table table-striped">
                     <thead>
                     <tr>
-                    <th th:text="#{deliveries.number}">Order</th>
-                    <th th:text="#{deliveries.state}">State</th>
-                    <th th:text="#{deliveries.city}">City</th>
-                    <th th:text="#{deliveries.zip}">Zip</th>
-                    <th th:text="#{deliveries.address}">Address</th>
-                    <th th:text="#{deliveries.date}">Date</th>
-                    <th th:text="#{deliveries.client}">Client Name</th>
-                    <th th:text="#{deliveries.phone}">Phone Number</th>
+                        <th th:text="#{driver.order}">Order</th>
+                        <th th:text="#{deliveries.number}">Order Number</th>
+                        <th th:text="#{deliveries.state}">State</th>
+                        <th th:text="#{deliveries.city}">City</th>
+                        <th th:text="#{deliveries.zip}">Zip</th>
+                        <th th:text="#{deliveries.address}">Address</th>
+                        <th th:text="#{deliveries.date}">Date</th>
+                        <th th:tel="#{deliveries.parts}">Parts</th>
+                        <th th:text="#{deliveries.client}">Client Name</th>
+                        <th th:text="#{deliveries.phone}">Phone Number</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="p, iterStat: ${parts}">
                         <td th:text="${iterStat.count}">NC</td>
+                        <td th:text="${p.delivery.orderNumber}">NC</td>
                         <td th:text="${p.delivery.state}">NC</td>
                         <td th:text="${p.delivery.city}">NY</td>
                         <td th:text="${p.delivery.zip}">02673</td>
                         <td th:text="${p.delivery.street}">blah</td>
                         <td th:text="${p.delivery.deliveryDate}">date</td>
+                        <td th:text="${p.items}">3</td>
                         <td th:text="${p.delivery.clientName}">client</td>
                         <td th:text="${p.delivery.phoneNumber}">777-7-777</td>
                     </tr>

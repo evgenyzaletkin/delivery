@@ -9,9 +9,9 @@ import java.util.Objects;
  * Created by evgeny on 08.05.15.
  */
 public final class Load {
-    private Tour<String> tour;
-    private DeliveryShift shift;
-    private LocalDate date;
+    private volatile Tour<String> tour;
+    private final DeliveryShift shift;
+    private final LocalDate date;
 
     public Tour<String> getTour() {
         return tour;
@@ -25,16 +25,14 @@ public final class Load {
         return shift;
     }
 
-    public void setShift(DeliveryShift shift) {
-        this.shift = shift;
-    }
 
     public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public Load(LocalDate date, DeliveryShift shift) {
         this.date = date;
+        this.shift = shift;
     }
 
     @Override

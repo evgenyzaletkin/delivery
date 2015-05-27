@@ -10,11 +10,11 @@ public class Utils {
     private Utils(){}
 
     public static String mapToAddress(Delivery d) {
-        return d.getStreet() + ", " + mapToCity(d);
+        return d.getStreet().toUpperCase() + ", " + mapToCity(d);
     }
 
     public static String mapToCity(Delivery d) {
-        return d.getCity() + ", " + d.getState() + " " + d.getZip();
+        return (d.getCity() + ", " + d.getState() + " " + d.getZip()).toUpperCase();
     }
 
     public static final String ORIGIN_ADDRESS = "RALEIGH, NC 27603";

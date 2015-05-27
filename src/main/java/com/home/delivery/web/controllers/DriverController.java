@@ -28,7 +28,7 @@ public class DriverController {
     private final LoadsService loadsService;
     private final CSVHelper csvHelper;
     private final List<String> header = Arrays.asList("Order", "Street", "City", "State", "ZIP", "Date",
-            "Purchase Order", "Items", "Phone");
+            "Purchase Order", "Items", "Client Name","Phone");
 
     @Inject
     public DriverController(DriverHelper driverHelper, LoadsService loadsService, CSVHelper csvHelper) {
@@ -66,6 +66,8 @@ public class DriverController {
         Load load = loadsService.getLoad(date, shift);
         if (load != null) {
             response.setContentType("text/csv");
+            String fileName = "route_for_" + date + "_" + shift.toString().toLowerCase() + ".csv";
+            response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
             PrintWriter writer = response.getWriter();
             List<DeliveryPart> parts = getSortedDeliveryParts(load);
             List<List<String>> lists = deliveriesToStrings(parts);
@@ -89,10 +91,10 @@ public class DriverController {
     }
 
     List<List<String>> deliveriesToStrings(List<DeliveryPart> parts) {
-        List<List<String>> toReturn = new ArrayList<>(2);
+        List<List<String>> toReturn = new ArrayList<>(parts.size());
         int i = 1;
         for (DeliveryPart part : parts) {
-            List<String> strings = new ArrayList<>(9);
+            List<String> strings = new ArrayList<>(10);
             strings.add(i + "");
             strings.add(part.getDelivery().getStreet());
             strings.add(part.getDelivery().getCity());
@@ -101,6 +103,7 @@ public class DriverController {
             strings.add(part.getDelivery().getDeliveryDate().toString());
             strings.add(part.getDelivery().getOrderNumber());
             strings.add(part.getItems() + "");
+            strings.add(part.getDelivery().getClientName());
             strings.add(part.getDelivery().getPhoneNumber());
             toReturn.add(strings);
         }

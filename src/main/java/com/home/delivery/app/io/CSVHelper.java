@@ -16,6 +16,7 @@ import java.io.Writer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -28,14 +29,20 @@ public class CSVHelper {
         return getRecords(in).
                 stream().
                 skip(1).
-                filter(record -> !Strings.isNullOrEmpty(record.get(0))).
+                filter(record -> !Strings.isNullOrEmpty(record.get(ORDER_NUMBER_INDEX))).
                 map(this::fromRecord).
+                filter(d -> d.getQuantity() != 0).
                 collect(Collectors.toList());
     }
 
 //    private final static int FIELDS_COUNT = 10;
     private final static int DATE_INDEX = 0;
     private final static int SHIFT_INDEX = 1;
+    private final static int ORIGIN_NAME_INDEX = 2;
+    private final static int ORIGIN_ADDRESS_INDEX = 3;
+    private final static int ORIGIN_CITY_INDEX = 4;
+    private final static int ORIGIN_STATE_INDEX = 5;
+    private final static int ORIGIN_ZIP_INDEX = 6;
     private final static int CLIENT_NAME_INDEX = 8;
     private final static int CLIENT_ADDRESS_INDEX = 9;
     private final static int CLIENT_CITY_INDEX = 10;
@@ -46,17 +53,32 @@ public class CSVHelper {
     private final static int VOLUME_INDEX = 17;
     private final static int QUANTITY_INDEX = 18;
 
+    private AtomicInteger brokenNumber = new AtomicInteger(1);
+
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("M/dd/yyyy");
 
     private Delivery fromRecord(CSVRecord record) {
-        LocalDate date = LocalDate.parse(record.get(DATE_INDEX), FORMATTER);
+        LocalDate date = Strings.isNullOrEmpty(record.get(DATE_INDEX)) ? null : LocalDate.parse(record.get(DATE_INDEX), FORMATTER);
         DeliveryShift deliveryShift = DeliveryShift.fromLetter(record.get(SHIFT_INDEX));
-        String clientName = record.get(CLIENT_NAME_INDEX);
-        String clientAddress = record.get(CLIENT_ADDRESS_INDEX);
-        String clientCity = record.get(CLIENT_CITY_INDEX);
-        String clientState = record.get(CLIENT_STATE_INDEX);
-        Integer destinationZip = Integer.valueOf(record.get(DESTINATION_ZIP_INDEX));
+        String clientName;
+        String clientAddress;
+        String clientCity;
+        String clientState;
+        Integer destinationZip;
+        if (record.get(ORIGIN_NAME_INDEX).equalsIgnoreCase("Larkin LLC")) {
+            clientName = record.get(CLIENT_NAME_INDEX);
+            clientAddress = record.get(CLIENT_ADDRESS_INDEX)/*.replaceAll(" RD", " Road")*/;
+            clientCity = record.get(CLIENT_CITY_INDEX);
+            clientState = record.get(CLIENT_STATE_INDEX);
+            destinationZip = Integer.valueOf(record.get(DESTINATION_ZIP_INDEX));
+        } else {
+            clientName = record.get(ORIGIN_NAME_INDEX);
+            clientAddress = record.get(ORIGIN_ADDRESS_INDEX);
+            clientCity = record.get(ORIGIN_CITY_INDEX);
+            clientState = record.get(ORIGIN_STATE_INDEX);
+            destinationZip = Integer.parseInt(record.get(ORIGIN_ZIP_INDEX));
+        }
         String phoneNumber = record.get(PHONE_NUMBER_INDEX);
         String orderNumber = record.get(ORDER_NUMBER_INDEX);
         Float volume = Float.valueOf(record.get(VOLUME_INDEX));

@@ -43,8 +43,21 @@ public class UploadController {
             InputStream inputStream = file.getInputStream();
             InputStreamReader isr = new InputStreamReader(inputStream);
             List<Delivery> deliveries = csvHelper.readDeliveries(isr);
+//            Map<LocalDate, List<Delivery>> collect =
+//                    deliveries.stream().
+//                            filter(d -> d.getDeliveryDate() != null).
+//                            collect(Collectors.groupingBy(Delivery::getDeliveryDate));
+//            for (Map.Entry<LocalDate, List<Delivery>> entry : collect.entrySet()) {
+//                System.out.println("Date : " + entry.getKey());
+//                System.out.println(entry.getValue().stream().
+//                        collect(Collectors.groupingBy(Delivery::getZip)).
+//                        values().
+//                        stream().
+//                        map(ds -> ds.stream().mapToDouble(Delivery::getVolumeNumber).sum() + "").
+//                        collect(Collectors.joining(", ")));
+//            }
             deliveriesService.addDeliveries(deliveries);
-            return "redirect:deliveries";
+            return "redirect:deliveries?corrupted=true";
         } else throw new IllegalStateException("File must not be empty");
 
     }

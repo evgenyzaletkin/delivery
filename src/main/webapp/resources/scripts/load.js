@@ -56,6 +56,18 @@ $(document).ready(function () {
         validate();
     });
 
+    $('#next').click(function () {
+        redirect("next");
+    });
+
+    $('#previous').click(function () {
+        redirect("previous");
+    });
+
+    var redirect = function(param) {
+        window.location.href = window.location.href + "&" + param + "=" + param;
+    };
+
     var moveRow = function (from, to) {
         var checkboxes = $(from).find("input:checked");
         for (var i = 0; i < checkboxes.length; i++) {
