@@ -38,7 +38,11 @@ public class LoadsController {
 
 
     @RequestMapping(method = RequestMethod.GET)
-    public String showPicker() {
+    public String showPicker(RedirectAttributes redirectAttributes) {
+        if (deliveriesService.getValidDeliveries().size() == 0) {
+            redirectAttributes.addFlashAttribute("showMessage", true);
+            return "redirect:upload";
+        }
         return "loadPicker";
     }
 
@@ -47,7 +51,7 @@ public class LoadsController {
                            @RequestParam("shift") DeliveryShift shift,
                            Model model,
                            RedirectAttributes redirectAttributes) {
-        if (deliveriesService.getValidDeliveries().size() == 0) return "redirect:upload";
+
         Load load = loadsService.getLoad(date, shift);
         if (load == null) load = loadsService.createNewLoad(date, shift);
         model.addAttribute("load", load);

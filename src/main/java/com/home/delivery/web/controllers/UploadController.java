@@ -4,10 +4,12 @@ import com.home.delivery.app.DeliveriesService;
 import com.home.delivery.app.Delivery;
 import com.home.delivery.app.io.CSVHelper;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -33,7 +35,8 @@ public class UploadController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String showUploadForm() {
+    public String showUploadForm(RedirectAttributes redirectAttributes, Model model) {
+        if (redirectAttributes.containsAttribute("showMessage")) model.addAttribute("showMessage", true);
         return "upload";
     }
 
@@ -43,19 +46,6 @@ public class UploadController {
             InputStream inputStream = file.getInputStream();
             InputStreamReader isr = new InputStreamReader(inputStream);
             List<Delivery> deliveries = csvHelper.readDeliveries(isr);
-//            Map<LocalDate, List<Delivery>> collect =
-//                    deliveries.stream().
-//                            filter(d -> d.getDeliveryDate() != null).
-//                            collect(Collectors.groupingBy(Delivery::getDeliveryDate));
-//            for (Map.Entry<LocalDate, List<Delivery>> entry : collect.entrySet()) {
-//                System.out.println("Date : " + entry.getKey());
-//                System.out.println(entry.getValue().stream().
-//                        collect(Collectors.groupingBy(Delivery::getZip)).
-//                        values().
-//                        stream().
-//                        map(ds -> ds.stream().mapToDouble(Delivery::getVolumeNumber).sum() + "").
-//                        collect(Collectors.joining(", ")));
-//            }
             deliveriesService.addDeliveries(deliveries);
             return "redirect:deliveries?corrupted=true";
         } else throw new IllegalStateException("File must not be empty");

@@ -14,6 +14,19 @@
 
 <div class="container">
 
+    <div class="row">
+        <div class="col-md-6">
+            <form class="form-inline" action="/driver" method="get" th:action="@{/driver}">
+                <div class="form-group">
+                    <label th:text="#{deliveries.date}">Date</label>
+                    <input type="date" name="date" th:value="${date}"/>
+                </div>
+                <input id="submit" class="btn btn-default" type="submit" th:value="#{ok}"/>
+            </form>
+        </div>
+    </div>
+
+
 
     <div th:unless="${#maps.isEmpty(loadsAndShifts)}" th:each="entry: ${loadsAndShifts.entrySet()}">
         <div class="row" th:with="load = ${entry.key}">
@@ -21,8 +34,7 @@
                 <form class="form-inline" action="/driver/download">
 
                     <div>
-                        <label th:text="#{deliveries.shift}">Shift</label>
-                        <input readonly="readonly" type="date" th:value="${load.date}" name="date"/>
+                        <input hidden="hidden" type="text" th:value="${load.date}" name="date"/>
                     </div>
 
                     <div>

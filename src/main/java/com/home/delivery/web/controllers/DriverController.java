@@ -39,12 +39,8 @@ public class DriverController {
 
 
     @RequestMapping(method = RequestMethod.GET)
-    public String showDatePick() {
-        return "driver/pickDate";
-    }
-
-    @RequestMapping(method = RequestMethod.GET, params = "date")
-    public String showLoads(Model model, @RequestParam("date") LocalDate date) {
+    public String showLoads(Model model, @RequestParam(value = "date", required = false) LocalDate date) {
+        if (date == null) date = LocalDate.of(2014, 9, 15);
         EnumSet<DeliveryShift> shifts = driverHelper.getShifts(date);
         Map<Load, List<DeliveryPart>> partsByLoads = new HashMap<>();
         for (DeliveryShift shift : shifts) {
@@ -95,7 +91,7 @@ public class DriverController {
         int i = 1;
         for (DeliveryPart part : parts) {
             List<String> strings = new ArrayList<>(10);
-            strings.add(i + "");
+            strings.add(i++ + "");
             strings.add(part.getDelivery().getStreet());
             strings.add(part.getDelivery().getCity());
             strings.add(part.getDelivery().getState());
