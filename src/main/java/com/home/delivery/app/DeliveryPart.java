@@ -4,12 +4,12 @@ public class DeliveryPart {
 
     private final Delivery delivery;
     private final Integer items;
-    final Load load;
+    final DateShiftKey dateShiftKey;
 
-    public DeliveryPart(Delivery delivery, Integer items, Load load) {
+    public DeliveryPart(Delivery delivery, Integer items, DateShiftKey dateShiftKey) {
         this.delivery = delivery;
         this.items = items;
-        this.load = load;
+        this.dateShiftKey = dateShiftKey;
     }
 
     public Delivery getDelivery() {
@@ -18,11 +18,19 @@ public class DeliveryPart {
     public Integer getItems() {
         return items;
     }
-    public Load getLoad() {
-        return load;
+    public DateShiftKey getDateShiftKey() {
+        return dateShiftKey;
     }
     public Float getVolume() {
-        return items * delivery.getVolumeNumber() / delivery.getQuantity();
+        return items * delivery.getVolume() / delivery.getQuantity();
+    }
+
+    public Float getDownloadVolume() {
+        return items * delivery.getDownloadVolume() / delivery.getQuantity();
+    }
+
+    public Float getUploadVolume() {
+        return items * delivery.getUploadVolume() / delivery.getQuantity();
     }
 
 }

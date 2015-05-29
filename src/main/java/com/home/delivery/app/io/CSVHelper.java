@@ -4,7 +4,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.home.delivery.app.Delivery;
 import com.home.delivery.app.DeliveryShift;
-import com.home.delivery.app.paths.Utils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -45,14 +44,14 @@ public class CSVHelper {
     private final static int DATE_INDEX = 0;
     private final static int SHIFT_INDEX = 1;
     private final static int ORIGIN_NAME_INDEX = 2;
-    private final static int ORIGIN_ADDRESS_INDEX = 3;
+    private final static int ORIGIN_STREET_INDEX = 3;
     private final static int ORIGIN_CITY_INDEX = 4;
     private final static int ORIGIN_STATE_INDEX = 5;
     private final static int ORIGIN_ZIP_INDEX = 6;
-    private final static int CLIENT_NAME_INDEX = 8;
-    private final static int CLIENT_ADDRESS_INDEX = 9;
-    private final static int CLIENT_CITY_INDEX = 10;
-    private final static int CLIENT_STATE_INDEX = 11;
+    private final static int DESTINATION_NAME_INDEX = 8;
+    private final static int DESTINATION_STREET_INDEX = 9;
+    private final static int DESTINATION_CITY_INDEX = 10;
+    private final static int DESTINATION_STATE_INDEX = 11;
     private final static int DESTINATION_ZIP_INDEX = 12;
     private final static int PHONE_NUMBER_INDEX = 14;
     private final static int ORDER_NUMBER_INDEX = 16;
@@ -65,24 +64,35 @@ public class CSVHelper {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("M/dd/yyyy");
 
     private Delivery fromRecord(CSVRecord record) {
-        String id = idGen.getAndIncrement() + "";
+        Delivery delivery = new Delivery();
+        delivery.setId(idGen.getAndIncrement() + "");
         LocalDate date = Strings.isNullOrEmpty(record.get(DATE_INDEX)) ? null : LocalDate.parse(record.get(DATE_INDEX), FORMATTER);
+        delivery.setDeliveryDate(date);
         DeliveryShift deliveryShift = DeliveryShift.fromLetter(record.get(SHIFT_INDEX));
-        String clientName = record.get(CLIENT_NAME_INDEX);
-        String clientAddress = record.get(CLIENT_ADDRESS_INDEX)/*.replaceAll(" RD", " Road")*/;
-        String clientCity = record.get(CLIENT_CITY_INDEX);
-        String clientState = record.get(CLIENT_STATE_INDEX);
-        String destinationZipStr = record.get(DESTINATION_ZIP_INDEX);
-        Integer destinationZip = Strings.isNullOrEmpty(destinationZipStr) ? 0 : Integer.parseInt(destinationZipStr);
-        String phoneNumber = record.get(PHONE_NUMBER_INDEX);
-        String orderNumber = record.get(ORDER_NUMBER_INDEX);
-        if (Strings.isNullOrEmpty(orderNumber)) orderNumber = Utils.NO_ORDER_NUMBER;
-        String volumeStr = record.get(VOLUME_INDEX);
-        Float volume = Strings.isNullOrEmpty(volumeStr) ? 0.0f : Float.valueOf(record.get(VOLUME_INDEX));
-        String quantityStr = record.get(QUANTITY_INDEX);
-        Integer quantity = Strings.isNullOrEmpty(quantityStr) ? 0 : Integer.valueOf(record.get(QUANTITY_INDEX));
-        return new Delivery(id, date, deliveryShift, clientName, clientAddress, clientCity, clientState, destinationZip,
-                phoneNumber, orderNumber, volume, quantity);
+        delivery.setDeliveryShift(deliveryShift);
+
+        delivery.setOriginName(record.get(ORIGIN_NAME_INDEX));
+        delivery.setOriginStreet(record.get(ORIGIN_STREET_INDEX));
+        delivery.setOriginCity(record.get(ORIGIN_CITY_INDEX));
+        delivery.setOriginState(record.get(ORIGIN_STATE_INDEX));
+        Integer originZip = Strings.isNullOrEmpty(record.get(ORIGIN_ZIP_INDEX)) ? 0 : Integer.valueOf(record.get(ORIGIN_ZIP_INDEX));
+        delivery.setOriginZip(originZip);
+
+        delivery.setDestinationName(record.get(DESTINATION_NAME_INDEX));
+        delivery.setDestinationStreet(record.get(DESTINATION_STREET_INDEX));
+        delivery.setDestinationCity(record.get(DESTINATION_CITY_INDEX));
+        delivery.setDestinationState(record.get(DESTINATION_STATE_INDEX));
+        Integer destinationZip = Strings.isNullOrEmpty(record.get(DESTINATION_ZIP_INDEX)) ? 0 :
+                Integer.valueOf(record.get(DESTINATION_ZIP_INDEX));
+        delivery.setDestinationZip(destinationZip);
+
+        delivery.setPhoneNumber(record.get(PHONE_NUMBER_INDEX));
+        delivery.setOrderNumber(record.get(ORDER_NUMBER_INDEX));
+        float volume = Strings.isNullOrEmpty(record.get(VOLUME_INDEX)) ? 0.0f : Float.parseFloat(record.get(VOLUME_INDEX));
+        delivery.setVolume(volume);
+        int quantity = Strings.isNullOrEmpty(record.get(QUANTITY_INDEX)) ? 0 : Integer.parseInt(record.get(QUANTITY_INDEX));
+        delivery.setQuantity(quantity);
+        return delivery;
     }
 
     private List<CSVRecord> getRecords(Reader in) {

@@ -55,8 +55,8 @@ public class LoadsController {
         Load load = loadsService.getLoad(date, shift);
         if (load == null) load = loadsService.createNewLoad(date, shift);
         model.addAttribute("load", load);
-        model.addAttribute("currentParts", loadsService.getDeliveryPartsForLoad(load));
-        model.addAttribute("availableParts", loadsService.getAvailableDeliveryPartsForLoad(load));
+        model.addAttribute("currentParts", load.getWaypoints().stream().flatMap(w -> w.getParts().stream()).collect(Collectors.toList()));
+        model.addAttribute("availableParts", loadsService.getAvailablePartsForDay(date));
         if (redirectAttributes.containsAttribute("submited")) model.addAttribute("submited", true);
         return "load";
     }
@@ -67,8 +67,7 @@ public class LoadsController {
                              @RequestParam(value = "delivery", defaultValue = "") List<String> deliveriesId,
                              @RequestParam(value = "items", defaultValue = "") List<Integer> items,
                              RedirectAttributes redirectAttributes) {
-        Load load = loadsService.getLoad(date, shift);
-        loadsService.updateLoad(load, deliveriesId, items);
+        loadsService.updateLoad(new DateShiftKey(date, shift), deliveriesId, items);
         redirectAttributes.addFlashAttribute("submited", true);
         return "redirect:loads?date=" + date + "&shift=" + shift;
     }

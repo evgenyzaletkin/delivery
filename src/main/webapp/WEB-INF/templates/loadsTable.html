@@ -21,9 +21,10 @@
             <td th:text="#{deliveries.number}">Order Number</td>
             <td th:text="#{deliveries.shift}">Shift</td>
             <td th:text="#{deliveries.volume}">Volume</td>
-            <td th:text="#{deliveries.city}">City</td>
-            <td th:text="#{deliveries.address}">Street</td>
-            <td th:text="#{deliveries.zip}">Street</td>
+            <td th:text="#{deliveries.destinationStreet}">Street</td>
+            <td th:text="#{deliveries.destinationCity}">City</td>
+            <td th:text="#{deliveries.destinationZip}">Street</td>
+            <td th:text="#{deliveries.isReturn}">Return</td>
             <td th:text="#{deliveries.availableparts}">Available Parts</td>
             <td th:text="#{deliveries.parts}">Parts</td>
         </tr>
@@ -32,15 +33,17 @@
         <tbody th:id="${tbodyId}">
         <tr th:each="d : ${deliveries}" th:class="${d.delivery.orderNumber}">
             <td><input type="checkbox"/></td>
-            <td><input type="text" readonly="readonly" name="delivery" th:value="${d.delivery.orderNumber}"/> </td>
+            <td><input type="text" readonly="readonly"  th:value="${d.delivery.orderNumber}"/> </td>
             <td th:text="${d.delivery.deliveryShift == null} ? '' : #{${'shift.' + d.delivery.deliveryShift}}">M</td>
-            <td class="total" th:text="${d.delivery.volumeNumber * d.items / d.delivery.quantity}"></td>
-            <td hidden="hidden" class="single" th:text="${d.delivery.volumeNumber / d.delivery.quantity}"></td>
-            <td th:text="${d.delivery.city}">New York</td>
+            <td class="total" th:text="${d.delivery.volume * d.items / d.delivery.quantity}"></td>
+            <td hidden="hidden" class="single" th:text="${d.delivery.volume / d.delivery.quantity}"></td>
             <td th:text="${d.delivery.street}">1080 Bearses way</td>
+            <td th:text="${d.delivery.city}">New York</td>
             <td th:text="${d.delivery.zip}">23800</td>
+            <td> <input type="checkbox" readonly="readonly" th:checked="${d.delivery.return}"/></td>
             <td class="allitems" th:text="${d.items}">10</td>
             <td class="items"><input type="number" name="items" th:value="${d.items}"/></td>
+            <td hidden="hidden"><input type="text" name="delivery" th:value="${d.delivery.id}"/></td>
         </tr>
         </tbody>
     </table>

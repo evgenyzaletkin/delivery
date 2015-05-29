@@ -36,12 +36,13 @@
                 <thead>
                 <tr>
                     <th th:text="#{deliveries.number}">Order Number</th>
-                    <th th:text="#{deliveries.client}">Client Name</th>
                     <th th:text="#{deliveries.date}">Date</th>
                     <th th:text="#{deliveries.shift}">Shift</th>
+                    <th th:text="#{deliveries.clientname}">Client Name</th>
+                    <th th:text="#{deliveries.street}">Address</th>
                     <th th:text="#{deliveries.city}">City</th>
-                    <th th:text="#{deliveries.address}">Address</th>
-                    <th th:text="#{deliveries.zip}">zip</th>
+                    <th th:text="#{deliveries.state}">City</th>
+                    <th th:text="#{deliveries.zip}">destinationZip</th>
                     <th th:text="#{deliveries.volume}">Volume</th>
                     <th th:text="#{deliveries.quantity}">Quantity</th>
                     <th th:text="#{deliveries.phone}">Phone Number</th>
@@ -51,15 +52,16 @@
                 <tr th:each="d : ${deliveries}">
                     <td><a href="/deliveries"
                            th:href="@{'/deliveries/' + ${d.id}}"
-                           th:text="${d.orderNumber}">Some Text</a>
+                           th:text="${d.orderNumber==null} ? #{deliveries.noNumber} : ${d.orderNumber}">Some Text</a>
                     </td>
-                    <td th:text="${d.clientName}">Ivan</td>
                     <td th:text="${d.deliveryDate}">01-01-2015</td>
                     <td th:text="${d.deliveryShift == null} ? '' : #{${'shift.' + d.deliveryShift}}">M</td>
-                    <td th:text="${d.city}">New York</td>
+                    <td th:text="${d.clientName}">Ivan</td>
                     <td th:text="${d.street}">1080 Bearses way</td>
+                    <td th:text="${d.city}">New York</td>
+                    <td th:text="${d.state}">New York</td>
                     <td th:text="${d.zip}">02324</td>
-                    <td th:text="${d.volumeNumber}">60,8</td>
+                    <td th:text="${d.volume}">60,8</td>
                     <td th:text="${d.quantity}">3</td>
                     <td th:text="${d.phoneNumber}">777-7-777</td>
                 </tr>

@@ -3,6 +3,7 @@ package com.home.delivery.app;
 import com.home.delivery.app.paths.tsp.Tour;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -12,6 +13,7 @@ public final class Load {
     private volatile Tour<String> tour;
     private final DeliveryShift shift;
     private final LocalDate date;
+    private volatile List<Waypoint> waypoints;
 
     public Tour<String> getTour() {
         return tour;
@@ -25,14 +27,22 @@ public final class Load {
         return shift;
     }
 
-
     public LocalDate getDate() {
         return date;
     }
 
-    public Load(LocalDate date, DeliveryShift shift) {
+    public void setWaypoints(List<Waypoint> waypoints) {
+        this.waypoints = waypoints;
+    }
+
+    public List<Waypoint> getWaypoints() {
+        return waypoints;
+    }
+
+    public Load(LocalDate date, DeliveryShift shift, List<Waypoint> waypoints) {
         this.date = date;
         this.shift = shift;
+        this.waypoints = waypoints;
     }
 
     @Override

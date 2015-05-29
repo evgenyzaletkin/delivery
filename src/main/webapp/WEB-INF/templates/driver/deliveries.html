@@ -62,13 +62,13 @@
                     <tr>
                         <th th:text="#{driver.order}">Order</th>
                         <th th:text="#{deliveries.number}">Order Number</th>
-                        <th th:text="#{deliveries.state}">State</th>
-                        <th th:text="#{deliveries.city}">City</th>
-                        <th th:text="#{deliveries.zip}">Zip</th>
-                        <th th:text="#{deliveries.address}">Address</th>
+                        <th th:text="#{deliveries.destinationState}">State</th>
+                        <th th:text="#{deliveries.destinationCity}">City</th>
+                        <th th:text="#{deliveries.destinationZip}">Zip</th>
+                        <th th:text="#{deliveries.destinationStreet}">Address</th>
                         <th th:text="#{deliveries.date}">Date</th>
                         <th th:tel="#{deliveries.parts}">Parts</th>
-                        <th th:text="#{deliveries.client}">Client Name</th>
+                        <th th:text="#{deliveries.destinationName}">Client Name</th>
                         <th th:text="#{deliveries.phone}">Phone Number</th>
                     </tr>
                     </thead>
@@ -82,7 +82,7 @@
                         <td th:text="${p.delivery.street}">blah</td>
                         <td th:text="${p.delivery.deliveryDate}">date</td>
                         <td th:text="${p.items}">3</td>
-                        <td th:text="${p.delivery.clientName}">client</td>
+                        <td th:text="${p.delivery.clietName}">client</td>
                         <td th:text="${p.delivery.phoneNumber}">777-7-777</td>
                     </tr>
                     </tbody>

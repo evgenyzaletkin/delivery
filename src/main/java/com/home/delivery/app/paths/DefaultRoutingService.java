@@ -1,20 +1,15 @@
 package com.home.delivery.app.paths;
 
-import com.google.common.collect.Lists;
-import com.home.delivery.app.Delivery;
-import com.home.delivery.app.paths.tsp.BranchAndBoundTspSolver;
-import com.home.delivery.app.paths.tsp.Tour;
-import com.home.delivery.app.paths.tsp.TspSolver;
+import com.home.delivery.app.Load;
+import com.home.delivery.app.Utils;
+import com.home.delivery.app.Waypoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by evgeny on 16.05.15.
@@ -33,36 +28,34 @@ public class DefaultRoutingService implements RoutingService
 
 
     @Override
-    public Tour<String> buildRoute(List<Delivery> deliveries) {
-        Map<String, List<Delivery>> groupedByAddress = deliveries.stream().collect(Collectors.groupingBy(Utils::mapToAddress));
-        List<String> waypoints = new ArrayList<>(groupedByAddress.keySet());
-        waypoints.add(Utils.ORIGIN_ADDRESS);
-        long l = System.currentTimeMillis();
-        Map<RouteElement, Integer> distances = googleMapsService.getDistances(waypoints, waypoints);
-        log.info("Time to get distances " + (System.currentTimeMillis() - l));
-        l = System.currentTimeMillis();
-        DistancesProvider<String> distancesProvider = new SimpleDistanceProvider(distances);
-        TspSolver<String> tspSolver = new BranchAndBoundTspSolver<>(Utils.ORIGIN_ADDRESS,
-                Lists.newArrayList(groupedByAddress.keySet()), distancesProvider);
-        Tour<String> optimal = tspSolver.findMinPath();
-        log.info("Time to get path " + (System.currentTimeMillis() - l));
-        log.info(String.format("The found tour is %s", optimal));
-        return optimal;
+    public void buildRoute(Load load) {
+//        List<String> addresses = load.getWaypoints().stream().map(Waypoint::getAddress).collect(Collectors.toList());
+//        addresses.add(Utils.ORIGIN_ADDRESS);
+//        long l = System.currentTimeMillis();
+//        Map<RouteElement, Integer> distances = googleMapsService.getDistances(addresses, addresses);
+//        log.info("Time to get distances " + (System.currentTimeMillis() - l));
+//        l = System.currentTimeMillis();
+//        DistancesProvider<String> distancesProvider = new SimpleDistanceProvider(distances);
+//        TspSolver<String> tspSolver = new BranchAndBoundTspSolver<>(Utils.ORIGIN_ADDRESS,
+//                waypoints.stream().map(Waypoint::getAddress).collect(Collectors.toList()), distancesProvider);
+//        Tour<String> optimal = tspSolver.findMinPath();
+//        log.info("Time to get path " + (System.currentTimeMillis() - l));
+//        log.info(String.format("The found tour is %s", optimal));
     }
 
-    private int getDistanceForPath(List<String> points, DistancesProvider<String> distancesProvider) {
-        if (points.size() == 0) return 0;
-        Iterator<String> iterator = points.iterator();
-        String previous = iterator.next();
-        int distance = distancesProvider.getDistance(Utils.ORIGIN_ADDRESS, previous);
-        while (iterator.hasNext()) {
-            String next = iterator.next();
-            distance += distancesProvider.getDistance(previous, next);
-            previous = next;
+    public List<Waypoint> getWaypointsForRouting(Load load) {
+        double availableVolume = Utils.MAX_VOLUME - load.getWaypoints().stream().mapToDouble(Waypoint::getDownloadVolume).sum();
+        List<Waypoint> waypointsForRouting = new ArrayList<>();
+        for (Waypoint waypoint : load.getWaypoints()) {
+            double delta = waypoint.getUploadVolume() - waypoint.getDownloadVolume();
+            if (delta <= availableVolume) {
+                waypointsForRouting.add(waypoint);
+                availableVolume -= delta;
+            }
         }
-        distance += distancesProvider.getDistance(previous, Utils.ORIGIN_ADDRESS);
-        return distance;
+        return waypointsForRouting;
     }
+
 
 
 

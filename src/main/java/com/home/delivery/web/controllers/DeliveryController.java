@@ -27,7 +27,6 @@ import java.util.stream.Stream;
 public class DeliveryController {
 
     private final DeliveriesService deliveriesService;
-    private final DeliveryValidator deliveryValidator;
     private static final Log log = LogFactory.getLog(DeliveryController.class);
     private static final String DELIVERIES_ATTRIBUTE = "deliveries";
     private static final String DELIVERY_ATTRIUBTE = "delivery";
@@ -35,9 +34,8 @@ public class DeliveryController {
 
 
     @Inject
-    public DeliveryController(DeliveriesService deliveriesService, DeliveryValidator deliveryValidator) {
+    public DeliveryController(DeliveriesService deliveriesService) {
         this.deliveriesService = deliveriesService;
-        this.deliveryValidator = deliveryValidator;
     }
 
 
@@ -71,7 +69,6 @@ public class DeliveryController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String updateDelivery(@Valid Delivery delivery, BindingResult bindingResult) {
-        deliveryValidator.validate(delivery, bindingResult);
         if (bindingResult.hasErrors())
             return "delivery";
         deliveriesService.addDeliveries(Collections.singletonList(delivery));

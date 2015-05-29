@@ -1,5 +1,6 @@
 package com.home.delivery.app;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.home.delivery.app.paths.RoutingService;
 
@@ -22,9 +23,8 @@ public class LoadsService {
     private final RoutingService routingService;
     private final DeliveriesService deliveriesService;
 
-    private final ConcurrentMap<LoadKey, Load> loads = Maps.newConcurrentMap();
+    private final ConcurrentMap<DateShiftKey, Load> loads = Maps.newConcurrentMap();
 
-    private static final double MAX_VOLUME = 1400.0;
 
 
     @Inject
@@ -38,133 +38,154 @@ public class LoadsService {
 
 
     public Load getLoad(LocalDate date, DeliveryShift shift) {
-        LoadKey key = new LoadKey(date, shift);
+        DateShiftKey key = new DateShiftKey(date, shift);
         return loads.get(key);
     }
 
 
     public synchronized Load createNewLoad(LocalDate date, DeliveryShift shift) {
-        List<Load> loadsForDay = new ArrayList<>(3);
-        for (DeliveryShift deliveryShift : DeliveryShift.values()) {
-            Load load = new Load(date, deliveryShift);
-            loadsForDay.add(load);
-            loads.put(new LoadKey(date, deliveryShift), load);
-        }
-//        Deliveries with predefined shifts should be put into the loads before any optimizations
-        loadsForDay.forEach(this::gatherByShifts);
-//        try to put all deliveries with one zip in one load
-        loadsForDay.forEach(l -> gatherByFunction(l, p -> p.getDelivery().getZip()));
-//        try to put all deliveries with one address in one load
-        loadsForDay.forEach(l -> gatherByFunction(l, p -> p.getDelivery().getStreet().toUpperCase() + p.getDelivery().getZip()));
-//        try to put only full deliveries into load
-        loadsForDay.forEach(l -> gatherByFunction(l, p -> p));
-//        gather other parts between deliveries
-        loadsForDay.forEach(this::gatherByParts);
-        return loadsForDay.stream().filter(l -> l.getShift() == shift).findAny().get();
+        List<DateShiftKey> keys = EnumSet.allOf(DeliveryShift.class).stream().
+                map(s -> new DateShiftKey(date, s)).collect(Collectors.toList());
+
+        ////        Waypoints with predefined shifts should be put into the loads before any optimizations
+        keys.forEach(this::gatherLoadByShifts);
+        ////        try to put all deliveries with one zip in one loadKey
+        keys.forEach(k -> gatherByFunction(k, w -> w.getParts().get(0).getDelivery().getZip()));
+//        try to put other waypoints
+        keys.forEach(k -> gatherByFunction(k, w -> w));
+
+        keys.forEach(k -> loads.put(k, new Load(k.date, k.shift, gatherToWaypoints(getDeliveryPartsForKey(k)))));
+
+        return loads.get(new DateShiftKey(date, shift));
     }
 
-
-    void gatherByShifts(Load load) {
-        List<DeliveryPart> availableDeliveryPartsForLoad = getAvailableDeliveryPartsForLoad(load);
-        List<DeliveryPart> necessaryParts = availableDeliveryPartsForLoad.stream().
-                filter(p -> load.getShift() == p.getDelivery().getDeliveryShift()).
+    void gatherLoadByShifts(DateShiftKey key) {
+        List<Waypoint> availableWaypoints = getAvailableWaypoints(key.date);
+        List<Waypoint> necessaryWaypoints = availableWaypoints.stream().
+                filter(w -> w.getParts().
+                        stream().
+                        anyMatch(p -> p.getDelivery().getDeliveryShift() == key.shift)).
                 collect(Collectors.toList());
-        for (DeliveryPart p : necessaryParts) {
-            DeliveryPart newPart = new DeliveryPart(p.getDelivery(), p.getItems(), load);
-            updateParts(newPart);
-        }
+        necessaryWaypoints.forEach(w -> w.parts.forEach(p -> createAndPutFromFreePart(p, key)));
     }
 
-    void gatherByFunction(Load load, Function<DeliveryPart, ?> f) {
-        double availableVolume = MAX_VOLUME - getDeliveryPartsForLoad(load).stream().
-                mapToDouble(DeliveryPart::getVolume).sum();
-        if (availableVolume <= MAX_VOLUME) {
-            List<DeliveryPart> availableDeliveries = getAvailableDeliveryPartsForLoad(load);
-            List<Map.Entry<?, List<DeliveryPart>>> groupedBy = availableDeliveries.
-                    stream().
-                    collect(Collectors.groupingBy(f)).
-                    entrySet().
-                    stream().
-                    collect(Collectors.toList());
-
-            for (Map.Entry<?, List<DeliveryPart>> entry : groupedBy) {
-                double partVolume = entry.getValue().stream().mapToDouble(DeliveryPart::getVolume).sum();
-                if (partVolume < availableVolume) {
-                    availableVolume -= partVolume;
-                    for (DeliveryPart deliveryPart : entry.getValue()) {
-                        DeliveryPart newPart = new DeliveryPart(deliveryPart.getDelivery(), deliveryPart.getItems(), load);
-                        updateParts(newPart);
-                    }
-                }
-            }
-
-        }
+    public List<Waypoint> getAvailableWaypoints(LocalDate date) {
+        return gatherToWaypoints(getAvailablePartsForDay(date));
     }
 
-
-
-    void gatherByParts(Load load) {
-        List<DeliveryPart> availableDeliveryPartsForLoad = getAvailableDeliveryPartsForLoad(load);
-        double currentVolume = getDeliveryPartsForLoad(load).stream().mapToDouble(DeliveryPart::getVolume).sum();
-        if (currentVolume < MAX_VOLUME) {
-            for (DeliveryPart possiblePart : availableDeliveryPartsForLoad) {
-                double availableVolume = MAX_VOLUME - currentVolume;
-                double itemVolume = possiblePart.getDelivery().getVolumeNumber() / possiblePart.getDelivery().getQuantity();
-                int items = Integer.min((int) (availableVolume / itemVolume), possiblePart.getItems());
-                if (items > 0) {
-                    DeliveryPart part = new DeliveryPart(possiblePart.getDelivery(), items, load);
-                    currentVolume += part.getVolume();
-                    updateParts(part);
-                }
-            }
-        }
-    }
-
-    public List<DeliveryPart> getDeliveryPartsForLoad(Load load) {
-        return deliveryParts.values().stream().filter(d -> load.equals(d.getLoad())).collect(Collectors.toList());
-    }
-
-    public List<DeliveryPart> getAvailableDeliveryPartsForLoad(Load load) {
-        return deliveriesService.getValidDeliveries().stream().
-                filter(d -> load.getDate().isEqual(d.getDeliveryDate())).
-                map(this::getFreePartsForDelivery).
-                filter(p -> p.getItems() != 0).
+    public List<Waypoint> gatherToWaypoints(List<DeliveryPart> parts) {
+        return parts.
+                stream().
+                collect(Collectors.groupingBy(p -> Utils.mapToAddress(p.getDelivery()))).
+                values().
+                stream().
+                map(Waypoint::new).
                 collect(Collectors.toList());
     }
 
+    public List<DeliveryPart> getAvailablePartsForDay(LocalDate date) {
+        List<Delivery> deliveriesForDay = deliveriesService.getValidDeliveries().
+                stream().
+                filter(d -> date.isEqual(d.getDeliveryDate())).
+                collect(Collectors.toList());
+        Map<Delivery, List<DeliveryPart>> partsByDeliveries = deliveryParts.values().
+                stream().filter(p -> date.isEqual(p.getDelivery().getDeliveryDate())).
+                collect(Collectors.groupingBy(DeliveryPart::getDelivery));
+        List<DeliveryPart> availableParts = new ArrayList<>(deliveriesForDay.size());
 
-    public void updateLoad(Load load, List<String> deliveriesIds, List<Integer> items) {
+        for (Delivery delivery : deliveriesForDay) {
+
+            int usedItems = partsByDeliveries.getOrDefault(delivery, Collections.emptyList()).
+                    stream().mapToInt(DeliveryPart::getItems).sum();
+            Preconditions.checkState(usedItems <= delivery.getQuantity());
+            if (usedItems < delivery.getQuantity()) {
+                availableParts.add(new DeliveryPart(delivery,  delivery.getQuantity() - usedItems, null));
+            }
+        }
+        return availableParts;
+    }
+
+    void gatherByFunction(DateShiftKey key,  Function<Waypoint, ?> f) {
+
+        List<DeliveryPart> currentParts = getDeliveryPartsForKey(key);
+        double availableDownloadVolume = Utils.MAX_VOLUME - currentParts.stream().mapToDouble(DeliveryPart::getDownloadVolume).sum();
+        double availableUploadVolume = Utils.MAX_VOLUME - currentParts.stream().mapToDouble(DeliveryPart::getUploadVolume).sum();
+        if (availableDownloadVolume > 0.0 || availableUploadVolume > 0.0) {
+            List<Waypoint> availableWaypoints = getAvailableWaypoints(key.date);
+            Map<Object, List<Waypoint>> groupedByF = availableWaypoints.
+                    stream().
+                    collect(Collectors.groupingBy(f));
+            for (Map.Entry<Object, List<Waypoint>> entry : groupedByF.entrySet()) {
+                List<Waypoint> waypoints = entry.getValue();
+                double downloadVolume = waypoints.stream().mapToDouble(Waypoint::getDownloadVolume).sum();
+                double uploadVolume = waypoints.stream().mapToDouble(Waypoint::getUploadVolume).sum();
+                if (availableDownloadVolume >= downloadVolume && availableUploadVolume >= uploadVolume) {
+                    availableDownloadVolume -= downloadVolume;
+                    availableUploadVolume -= uploadVolume;
+                    waypoints.stream().flatMap(w -> w.getParts().stream()).forEach(p -> createAndPutFromFreePart(p, key));
+                }
+            }
+        }
+    }
+
+
+    public List<DeliveryPart> getDeliveryPartsForKey(DateShiftKey key) {
+        return deliveryParts.values().stream().filter(d -> key.equals(d.getDateShiftKey())).collect(Collectors.toList());
+    }
+
+    public DeliveryPart createNewPart(String deliveryId, DateShiftKey key, Integer items) {
+        Delivery delivery = deliveriesService.getDelivery(deliveryId).get();
+        int usedItems = items +  deliveryParts.values().
+                stream().
+                filter(p -> delivery.equals(p.getDelivery())).
+                mapToInt(DeliveryPart::getItems).
+                sum();
+        Preconditions.checkState(usedItems <= delivery.getQuantity(), "Delivery contains only %s, but required %s",
+                delivery.getQuantity(), usedItems);
+       return new DeliveryPart(delivery, items, key);
+    }
+
+
+    public void updateLoad(DateShiftKey key, List<String> deliveriesIds, List<Integer> items) {
 
         checkArgument(deliveriesIds.size() == items.size());
-        clearOldParts(load, deliveriesIds);
+
+        clearOldParts(key, deliveriesIds);
         Iterator<Integer> itemsIterator = items.iterator();
+        List<DeliveryPart> parts = new ArrayList<>(deliveriesIds.size());
         for (String deliveriesId : deliveriesIds) {
             Delivery d = deliveriesService.getDelivery(deliveriesId).get();
-            updateParts(new DeliveryPart(d, itemsIterator.next(), load));
+            DeliveryPart newPart = createNewPart(d.getId(), key, itemsIterator.next());
+            parts.add(newPart);
+            deliveryParts.put(new PartKey(d.getId(), key), newPart);
         }
-        load.setTour(null);
+        Load load = loads.get(key);
+        load.setWaypoints(gatherToWaypoints(parts));
         executorService.submit(() -> {
-            List<Delivery> allDeliveries = getDeliveryPartsForLoad(load).stream().
-                    map(DeliveryPart::getDelivery).
-                    distinct().
-                    collect(Collectors.toList());
-            load.setTour(routingService.buildRoute(allDeliveries));
+            routingService.buildRoute(load);
         });
     }
 
-    private void clearOldParts(Load load, List<String> deliveriesIds) {
-        getDeliveryPartsForLoad(load).stream().
-                filter(p -> !deliveriesIds.contains(p.getDelivery().getId())).
-                forEach(p -> updateParts(new DeliveryPart(p.getDelivery(), 0, load)));
+    private void clearOldParts(DateShiftKey key, List<String> deliveriesIds) {
+        deliveriesIds.forEach(id -> deliveryParts.remove(createPartKey(id, key)));
+    }
+
+    void createAndPutFromFreePart(DeliveryPart part, DateShiftKey key) {
+        createAndPutNewPart(part.getDelivery(), key, part.getItems());
+    }
+
+    void createAndPutNewPart(Delivery delivery, DateShiftKey key, int items) {
+        PartKey partKey = new PartKey(delivery.getId(), key);
+        deliveryParts.put(partKey, new DeliveryPart(delivery, items, key));
     }
 
     private class PartKey {
         final String deliveryNumber;
-        final LoadKey loadKey;
+        final DateShiftKey dateShiftKey;
 
-        private PartKey(String deliveryNumber, LoadKey loadKey) {
+        private PartKey(String deliveryNumber, DateShiftKey dateShiftKey) {
             this.deliveryNumber = deliveryNumber;
-            this.loadKey = loadKey;
+            this.dateShiftKey = dateShiftKey;
         }
 
         @Override
@@ -173,76 +194,21 @@ public class LoadsService {
             if (o == null || getClass() != o.getClass()) return false;
             PartKey partKey = (PartKey) o;
             return Objects.equals(deliveryNumber, partKey.deliveryNumber) &&
-                    Objects.equals(loadKey, partKey.loadKey);
+                    Objects.equals(dateShiftKey, partKey.dateShiftKey);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(deliveryNumber, loadKey);
+            return Objects.hash(deliveryNumber, dateShiftKey);
         }
     }
 
     ConcurrentMap<PartKey, DeliveryPart> deliveryParts = new ConcurrentHashMap<>();
 
-
-    void updateParts(DeliveryPart newPart) {
-        checkArgument(newPart.getItems() <= newPart.getDelivery().getQuantity(),
-                "Impossible to get %s items from delivery with %s items",
-                newPart.getItems(), newPart.getDelivery().getQuantity());
-        PartKey currentKey = createPartKey(newPart.getDelivery(), newPart.getLoad());
-        PartKey freeKey = createPartKey(newPart.getDelivery(), null);
-        DeliveryPart currentPart = deliveryParts.get(currentKey);
-        DeliveryPart freePart = deliveryParts.get(freeKey);
-        int freeItems;
-        if (currentPart == null) {
-            checkArgument(freePart.getItems() >= newPart.getItems(),
-                    "The number of available items %s is less than number of free items %s",
-                    freePart.getItems(), newPart.getItems());
-            freeItems = freePart.getItems() - newPart.getItems();
-        } else {
-            checkArgument(freePart.getItems() + currentPart.getItems() >= newPart.getItems());
-            freeItems = freePart.getItems() + currentPart.getItems() - newPart.getItems();
-        }
-        DeliveryPart newFreePart = new DeliveryPart(freePart.getDelivery(), freeItems, null);
-        deliveryParts.put(freeKey, newFreePart);
-        if (newPart.getItems() == 0) deliveryParts.remove(currentKey);
-        else deliveryParts.put(currentKey, newPart);
+    private PartKey createPartKey(String deliveryId, DateShiftKey key) {
+        return new PartKey(deliveryId, key);
     }
 
-    DeliveryPart getFreePartsForDelivery(Delivery d) {
-        return deliveryParts.computeIfAbsent(createPartKey(d, null), key -> new DeliveryPart(d, d.getQuantity(), null));
-    }
-
-    private PartKey createPartKey(Delivery d, Load l) {
-        return l == null ?
-                new PartKey(d.getId(), null) :
-                new PartKey(d.getId(), new LoadKey(l.getDate(), l.getShift()));
-    }
-
-
-    private class LoadKey {
-        private final LocalDate date;
-        private final DeliveryShift shift;
-
-        private LoadKey(LocalDate date, DeliveryShift shift) {
-            this.date = date;
-            this.shift = shift;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            LoadKey loadKey = (LoadKey) o;
-            return Objects.equals(date, loadKey.date) &&
-                    Objects.equals(shift, loadKey.shift);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(date, shift);
-        }
-    }
 
     public void reset() {
         deliveryParts.clear();

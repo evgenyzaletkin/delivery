@@ -2,7 +2,6 @@ package com.home.delivery.web.controllers;
 
 import com.home.delivery.app.*;
 import com.home.delivery.app.io.CSVHelper;
-import com.home.delivery.app.paths.Utils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,17 +72,7 @@ public class DriverController {
     }
 
     List<DeliveryPart> getSortedDeliveryParts(Load load) {
-        List<DeliveryPart> parts = loadsService.getDeliveryPartsForLoad(load);
-        if (load.getTour() != null) {
-            Map<String, List<DeliveryPart>> groupedByAddresses = parts.
-                    stream().
-                    collect(Collectors.groupingBy(p -> Utils.mapToAddress(p.getDelivery())));
-            parts = load.getTour().getPath().stream().
-                    filter(s -> !Utils.ORIGIN_ADDRESS.equals(s)).
-                    flatMap(address -> groupedByAddresses.get(address).stream()).
-                    collect(Collectors.toList());
-        }
-        return parts;
+        return load.getWaypoints().stream().flatMap(w -> w.getParts().stream()).collect(Collectors.toList());
     }
 
     List<List<String>> deliveriesToStrings(List<DeliveryPart> parts) {
@@ -92,14 +81,14 @@ public class DriverController {
         for (DeliveryPart part : parts) {
             List<String> strings = new ArrayList<>(10);
             strings.add(i++ + "");
-            strings.add(part.getDelivery().getStreet());
-            strings.add(part.getDelivery().getCity());
-            strings.add(part.getDelivery().getState());
-            strings.add(part.getDelivery().getZip() + "");
+            strings.add(part.getDelivery().getDestinationStreet());
+            strings.add(part.getDelivery().getDestinationCity());
+            strings.add(part.getDelivery().getDestinationState());
+            strings.add(part.getDelivery().getDestinationZip() + "");
             strings.add(part.getDelivery().getDeliveryDate().toString());
             strings.add(part.getDelivery().getId() + "");
             strings.add(part.getItems() + "");
-            strings.add(part.getDelivery().getClientName());
+            strings.add(part.getDelivery().getDestinationName());
             strings.add(part.getDelivery().getPhoneNumber());
             toReturn.add(strings);
         }

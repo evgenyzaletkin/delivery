@@ -12,45 +12,49 @@ import java.time.LocalDate;
  */
 public final class Delivery {
     private String id;
-    @NotNull private LocalDate deliveryDate;
+    @NotNull
+    private LocalDate deliveryDate;
     private DeliveryShift deliveryShift;
-//    private final String originName;
-//    private final String originAdress;
-//    private final String originCity;
-//    private final String originState;
-//    private final Integer originZip;
-//    private final String originCountry;
-    @NotEmpty private String clientName;
-    @NotEmpty private String street;
-    @NotEmpty private String city;
-    @NotEmpty private String state;
-    @Range(min = 1001, max = 99999) private Integer zip;
-//    private final String destinationCountry;
+
+
+    @NotEmpty
+    private String orderNumber;
+    @Min(0)
+    private Float volume;
+    @Min(1)
+    private Integer quantity;
+
+
+    @NotEmpty
+    private String originName;
+    @NotEmpty
+    private String originStreet;
+    @NotEmpty
+    private String originCity;
+    @NotEmpty
+    private String originState;
+    @Range(min = 1001, max = 99999)
+    private Integer originZip;
+
+    @NotEmpty
+    private String destinationName;
+    @NotEmpty
+    private String destinationStreet;
+    @NotEmpty
+    private String destinationCity;
+    @NotEmpty
+    private String destinationState;
+    @Range(min = 1001, max = 99999)
+    private Integer destinationZip;
+    @NotEmpty
     private String phoneNumber;
-    @NotEmpty private String orderNumber;
-    @Min(0) private Float volumeNumber;
-    @Min(1) private Integer quantity;
+
     boolean isValid = true;
+    boolean isReturn = false;
 
     public Delivery() {
     }
 
-    public Delivery(String id, LocalDate deliveryDate, DeliveryShift deliveryShift, String clientName, String street,
-                    String city, String state, Integer destinationZip, String phoneNumber,
-                    String orderNumber, Float volumeNumber, Integer quantity) {
-        this.id = id;
-        this.deliveryDate = deliveryDate;
-        this.deliveryShift = deliveryShift;
-        this.clientName = clientName;
-        this.street = street;
-        this.city = city;
-        this.state = state;
-        this.zip = destinationZip;
-        this.phoneNumber = phoneNumber;
-        this.orderNumber = orderNumber;
-        this.volumeNumber = volumeNumber;
-        this.quantity = quantity;
-    }
 
     public String getId() {
         return id;
@@ -84,44 +88,104 @@ public final class Delivery {
         this.deliveryShift = deliveryShift;
     }
 
-    public String getClientName() {
-        return clientName;
+    public String getDestinationName() {
+        return destinationName;
     }
 
-    public void setClientName(String clientName) {
-        this.clientName = clientName;
+    public void setDestinationName(String destinationName) {
+        this.destinationName = destinationName;
+    }
+
+    public String getDestinationStreet() {
+        return destinationStreet;
+    }
+
+    public void setDestinationStreet(String destinationStreet) {
+        this.destinationStreet = destinationStreet;
+    }
+
+    public String getDestinationCity() {
+        return destinationCity;
+    }
+
+    public void setDestinationCity(String destinationCity) {
+        this.destinationCity = destinationCity;
+    }
+
+    public String getDestinationState() {
+        return destinationState;
+    }
+
+    public void setDestinationState(String destinationState) {
+        this.destinationState = destinationState;
+    }
+
+    public Integer getDestinationZip() {
+        return destinationZip;
+    }
+
+    public void setDestinationZip(Integer destinationZip) {
+        this.destinationZip = destinationZip;
+    }
+
+    public String getOriginName() {
+        return originName;
+    }
+
+    public void setOriginName(String originName) {
+        this.originName = originName;
+    }
+
+    public String getOriginStreet() {
+        return originStreet;
+    }
+
+    public void setOriginStreet(String originStreet) {
+        this.originStreet = originStreet;
+    }
+
+    public String getOriginCity() {
+        return originCity;
+    }
+
+    public void setOriginCity(String originCity) {
+        this.originCity = originCity;
+    }
+
+    public String getOriginState() {
+        return originState;
+    }
+
+    public void setOriginState(String originState) {
+        this.originState = originState;
+    }
+
+    public Integer getOriginZip() {
+        return originZip;
+    }
+
+    public void setOriginZip(Integer originZip) {
+        this.originZip = originZip;
+    }
+
+    public String getClientName() {
+        return isReturn ? getOriginName() : getDestinationName();
     }
 
     public String getStreet() {
-        return street;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
+        return isReturn ? getOriginStreet() : getDestinationStreet();
     }
 
     public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
+        return isReturn ? getOriginCity() : getDestinationCity();
     }
 
     public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
+        return isReturn ? getOriginState() : getDestinationState();
     }
 
     public Integer getZip() {
-        return zip;
-    }
-
-    public void setZip(Integer zip) {
-        this.zip = zip;
+        return isReturn ? getOriginZip() : getDestinationZip();
     }
 
     public String getPhoneNumber() {
@@ -132,14 +196,20 @@ public final class Delivery {
         this.phoneNumber = phoneNumber;
     }
 
-
-
-    public Float getVolumeNumber() {
-        return volumeNumber;
+    public Float getVolume() {
+        return volume;
     }
 
-    public void setVolumeNumber(Float volumeNumber) {
-        this.volumeNumber = volumeNumber;
+    public void setVolume(Float volume) {
+        this.volume = volume;
+    }
+
+    public Float getDownloadVolume() {
+        return isReturn ? 0.0f : getVolume();
+    }
+
+    public Float getUploadVolume() {
+        return isReturn ? getVolume() : 0.0f;
     }
 
     public Integer getQuantity() {
@@ -158,20 +228,38 @@ public final class Delivery {
         this.isValid = isValid;
     }
 
+
+    public boolean isReturn() {
+        return isReturn;
+    }
+
+    public void setIsReturn(boolean isReturn) {
+        this.isReturn = isReturn;
+    }
+
+
     @Override
     public String toString() {
         return "Delivery{" +
-                "deliveryDate=" + deliveryDate +
+                "id='" + id + '\'' +
+                ", deliveryDate=" + deliveryDate +
                 ", deliveryShift=" + deliveryShift +
-                ", clientName='" + clientName + '\'' +
-                ", street='" + street + '\'' +
-                ", city='" + city + '\'' +
-                ", state='" + state + '\'' +
-                ", zip=" + zip +
-                ", phoneNumber='" + phoneNumber + '\'' +
                 ", orderNumber='" + orderNumber + '\'' +
-                ", volumeNumber=" + volumeNumber +
+                ", volume=" + volume +
                 ", quantity=" + quantity +
+                ", originName='" + originName + '\'' +
+                ", originStreet='" + originStreet + '\'' +
+                ", originCity='" + originCity + '\'' +
+                ", originState='" + originState + '\'' +
+                ", originZip=" + originZip +
+                ", destinationName='" + destinationName + '\'' +
+                ", destinationStreet='" + destinationStreet + '\'' +
+                ", destinationCity='" + destinationCity + '\'' +
+                ", destinationState='" + destinationState + '\'' +
+                ", destinationZip=" + destinationZip +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", isValid=" + isValid +
+                ", isReturn=" + isReturn +
                 '}';
     }
 
@@ -182,7 +270,7 @@ public final class Delivery {
 
         Delivery delivery = (Delivery) o;
 
-        if (!orderNumber.equals(delivery.orderNumber)) return false;
+        if (!id.equals(delivery.id)) return false;
 
         return true;
     }

@@ -6,12 +6,11 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Created by evgeny on 28.05.15.
  */
-@Named
+//@Named
 public class DeliveryValidator implements Validator {
 
     private final DeliveriesService deliveriesService;

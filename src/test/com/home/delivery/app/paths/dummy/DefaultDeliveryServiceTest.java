@@ -41,16 +41,16 @@ public class DefaultDeliveryServiceTest
         List<Delivery> deliveries = Arrays.stream(rawText.split("\n")).map(s -> {
             String[] split = s.split("\t");
             Delivery d = new Delivery();
-            d.setStreet(split[0]);
-            d.setCity(split[1]);
-            d.setState(split[2]);
-            d.setZip(Integer.valueOf(split[3]));
+            d.setDestinationStreet(split[0]);
+            d.setDestinationCity(split[1]);
+            d.setDestinationState(split[2]);
+            d.setDestinationZip(Integer.valueOf(split[3]));
             return d;
         }).collect(Collectors.toList());
 
         GoogleMapsService googleMapsService = new GoogleMapsService();
         DefaultRoutingService routingService = new DefaultRoutingService(googleMapsService);
-        System.out.println(routingService.buildRoute(deliveries));
+//        routingService.buildRoute(deliveries);
     }
 
     @Test
@@ -62,16 +62,16 @@ public class DefaultDeliveryServiceTest
         List<Delivery> deliveries = Arrays.stream(rawText.split("\n")).map(s -> {
             String[] split = s.split("\t");
             Delivery d = new Delivery();
-            d.setStreet(split[0]);
-            d.setCity(split[1]);
-            d.setState(split[2]);
-            d.setZip(Integer.valueOf(split[3]));
+            d.setDestinationStreet(split[0]);
+            d.setDestinationCity(split[1]);
+            d.setDestinationState(split[2]);
+            d.setDestinationZip(Integer.valueOf(split[3]));
             return d;
         }).collect(Collectors.toList());
 
         GoogleMapsService googleMapsService = new GoogleMapsService();
         DefaultRoutingService routingService = new DefaultRoutingService(googleMapsService);
-        System.out.println(routingService.buildRoute(deliveries));
+//        System.out.println(routingService.buildRoute(deliveries));
     }
 
 

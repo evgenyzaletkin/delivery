@@ -1,7 +1,5 @@
 package com.home.delivery.app;
 
-import com.home.delivery.app.paths.Utils;
-
 import javax.inject.Named;
 import java.util.Collection;
 import java.util.Optional;
@@ -20,14 +18,14 @@ public class DeliveriesService {
 
     private static final Predicate<Delivery> CORRUPTED =
             d -> Utils.NO_ORDER_NUMBER.equals(d.getOrderNumber()) ||
-                    d.getClientName() == null ||
+                    d.getDestinationName() == null ||
                     d.getDeliveryDate() == null ||
-                    d.getCity() == null ||
-                    d.getState() == null ||
-                    d.getStreet() == null ||
-                    d.getZip() == null ||
+                    d.getDestinationCity() == null ||
+                    d.getDestinationState() == null ||
+                    d.getDestinationStreet() == null ||
+                    d.getDestinationZip() == null ||
                     d.getQuantity() == 0 ||
-                    d.getVolumeNumber() == 0.0;
+                    d.getVolume() == 0.0;
 
 
     public Collection<Delivery> getValidDeliveries() {
@@ -57,17 +55,14 @@ public class DeliveriesService {
 //                collect(Collectors.groupingBy(Delivery::getDeliveryDate)).
 //                entrySet().
 //                stream().
-//                map(e -> new HashMap.SimpleEntry<>(e.getKey(), e.getValue().stream().mapToDouble(Delivery::getVolumeNumber).sum())).
+//                map(e -> new HashMap.SimpleEntry<>(e.getKey(), e.getValue().stream().mapToDouble(Delivery::getVolume).sum())).
 //                collect(Collectors.toList()).toString());
+        deliveries.forEach(d -> {
+            if (Utils.LARKIN_NAME.equals(d.getDestinationName())) d.setIsReturn(true);
+            this.deliveries.put(d.getId(), d);
+        });
         deliveries.stream().filter(CORRUPTED).forEach(d -> d.setIsValid(false));
-        deliveries.stream().
-                collect(Collectors.groupingBy(Delivery::getOrderNumber)).
-                values().
-                stream().
-                filter(l -> l.size() != 1).
-                flatMap(Collection::stream).
-                forEach(d -> d.setIsValid(false));
-        deliveries.forEach(d -> this.deliveries.put(d.getId(), d));
+
     }
 
     public void removeDelivery(Delivery delivery) {
