@@ -1,28 +1,25 @@
 $(document).ready(function () {
     var validate = function () {
-        if (validateVolume()) {
+        var dlCheck = validateVolume(".total_dl", "#total_dl");
+        var ulCheck = validateVolume(".total_ul", "#total_ul");
+        if (dlCheck && ulCheck) {
             $('#submit').removeAttr('disabled');
+            $("#errors").hide();
         } else {
             $('#submit').attr('disabled', 'disabled');
+            $("#errors").show();
         }
         validateShifts();
     };
 
-    var validateVolume = function () {
-        var rows = $("#assigned").children();
+    var validateVolume = function (totalClass, elementId) {
+        var cells = $("#assigned").find(totalClass);
         var sum = 0;
-        for (var i = 0; i < rows.length; i++) {
-            var cells = $(rows[i]).children();
-            sum += parseFloat($(cells[3]).text());
+        for (var i = 0; i < cells.length; i++) {
+            sum += parseFloat($(cells[i]).text());
         }
-        $("#total").text(sum);
-        if (sum > 1400.0) {
-            $("#errors").show();
-            return false;
-        } else {
-            $("#errors").hide();
-            return true;
-        }
+        $(elementId).text(sum);
+        return sum <= 1400;
     };
 
     var validateShifts = function () {

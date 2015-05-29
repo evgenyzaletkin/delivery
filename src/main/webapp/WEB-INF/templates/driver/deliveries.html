@@ -43,11 +43,11 @@
                         <input hidden="hidden" type="text" th:value="${load.shift}" name="shift"/>
                     </div>
 
-                    <div th:if="${load.tour != null}">
-                        <label th:text="#{loads.distance}"></label>
+                    <!--<div th:if="${load.tour != null}">-->
+                        <!--<label th:text="#{loads.distance}"></label>-->
 
-                        <p th:text="${load.tour.distance}"></p>
-                    </div>
+                        <!--<p th:text="${load.tour.distance}"></p>-->
+                    <!--</div>-->
                     <div>
                         <button type="submit" th:text="#{driver.download}" class="btn btn-default">Submit</button>
                     </div>
@@ -62,13 +62,14 @@
                     <tr>
                         <th th:text="#{driver.order}">Order</th>
                         <th th:text="#{deliveries.number}">Order Number</th>
-                        <th th:text="#{deliveries.destinationState}">State</th>
-                        <th th:text="#{deliveries.destinationCity}">City</th>
-                        <th th:text="#{deliveries.destinationZip}">Zip</th>
-                        <th th:text="#{deliveries.destinationStreet}">Address</th>
+                        <th th:text="#{deliveries.state}">State</th>
+                        <th th:text="#{deliveries.city}">City</th>
+                        <th th:text="#{deliveries.zip}">Zip</th>
+                        <th th:text="#{deliveries.street}">Address</th>
                         <th th:text="#{deliveries.date}">Date</th>
-                        <th th:tel="#{deliveries.parts}">Parts</th>
-                        <th th:text="#{deliveries.destinationName}">Client Name</th>
+                        <th th:text="#{deliveries.parts}">Parts</th>
+                        <th th:text="#{deliveries.isReturn}">For Return</th>
+                        <th th:text="#{deliveries.clientname}">Client Name</th>
                         <th th:text="#{deliveries.phone}">Phone Number</th>
                     </tr>
                     </thead>
@@ -82,7 +83,8 @@
                         <td th:text="${p.delivery.street}">blah</td>
                         <td th:text="${p.delivery.deliveryDate}">date</td>
                         <td th:text="${p.items}">3</td>
-                        <td th:text="${p.delivery.clietName}">client</td>
+                        <td> <input type="checkbox" disabled="disabled" th:checked="${p.delivery.return}"/></td>
+                        <td th:text="${p.delivery.clientName}">client</td>
                         <td th:text="${p.delivery.phoneNumber}">777-7-777</td>
                     </tr>
                     </tbody>

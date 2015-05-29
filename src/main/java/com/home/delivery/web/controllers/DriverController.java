@@ -27,7 +27,7 @@ public class DriverController {
     private final LoadsService loadsService;
     private final CSVHelper csvHelper;
     private final List<String> header = Arrays.asList("Order", "Street", "City", "State", "ZIP", "Date",
-            "Purchase Order", "Items", "Client Name","Phone");
+            "Purchase Order", "Items", "For Return", "Client Name","Phone");
 
     @Inject
     public DriverController(DriverHelper driverHelper, LoadsService loadsService, CSVHelper csvHelper) {
@@ -81,14 +81,15 @@ public class DriverController {
         for (DeliveryPart part : parts) {
             List<String> strings = new ArrayList<>(10);
             strings.add(i++ + "");
-            strings.add(part.getDelivery().getDestinationStreet());
-            strings.add(part.getDelivery().getDestinationCity());
-            strings.add(part.getDelivery().getDestinationState());
-            strings.add(part.getDelivery().getDestinationZip() + "");
+            strings.add(part.getDelivery().getStreet());
+            strings.add(part.getDelivery().getCity());
+            strings.add(part.getDelivery().getState());
+            strings.add(part.getDelivery().getZip() + "");
             strings.add(part.getDelivery().getDeliveryDate().toString());
-            strings.add(part.getDelivery().getId() + "");
+            strings.add(part.getDelivery().getOrderNumber() + "");
             strings.add(part.getItems() + "");
-            strings.add(part.getDelivery().getDestinationName());
+            strings.add(Boolean.toString(part.getDelivery().isReturn()));
+            strings.add(part.getDelivery().getClientName());
             strings.add(part.getDelivery().getPhoneNumber());
             toReturn.add(strings);
         }

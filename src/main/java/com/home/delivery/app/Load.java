@@ -1,7 +1,5 @@
 package com.home.delivery.app;
 
-import com.home.delivery.app.paths.tsp.Tour;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -10,18 +8,9 @@ import java.util.Objects;
  * Created by evgeny on 08.05.15.
  */
 public final class Load {
-    private volatile Tour<String> tour;
     private final DeliveryShift shift;
     private final LocalDate date;
     private volatile List<Waypoint> waypoints;
-
-    public Tour<String> getTour() {
-        return tour;
-    }
-
-    public void setTour(Tour<String> tour) {
-        this.tour = tour;
-    }
 
     public DeliveryShift getShift() {
         return shift;
